@@ -1,0 +1,28 @@
+{
+  "name": "designpatterns",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000B\u0000l\u0000o\u0000c\u0000k\u0000c\u0000h\u0000a\u0000i\u0000n\u0000-\u0000D\u0000P\u0000\r\u0000 \u0000",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./app",
+    "dev2" : "set HTTP_PORT=3002 && set P2P_PORT=5002 && set PEERS=ws://localhost:5001 && nodemon ./app",
+    "dev3" : "set HTTP_PORT=3003 && set P2P_PORT=5003 && set PEERS=ws://localhost:5002,ws://localhost:5001 && npm run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pirgo/Blockchain-DP.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Pirgo/Blockchain-DP/issues"
+  },
+  "homepage": "https://github.com/Pirgo/Blockchain-DP#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "crypto-js": "^4.1.1",
+    "express": "^4.17.1",
+    "ws": "^8.3.0"
+  }
+}
