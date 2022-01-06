@@ -1,13 +1,45 @@
 const SHA256 = require('crypto-js/sha256');
-const DIFFICULTY = 4;
+const DIFFICULTY = 5;
 
+//TODO: zmienic data na transakcje
 class Block{
-    constructor(timestamp,lastHash,hash,data, nonce){
+    constructor(timestamp,lastHash,hash,nonce,data){
         this.timestamp = timestamp;
         this.lastHash = lastHash;
         this.hash = hash;
-        this.data = data;
         this.nonce = nonce;
+        this.data = data;
+    }
+
+    //TODO: wpisac do genesisa dane wykladowcó i studentów
+    static genesis(){
+        return new this('Genesis', '----', 'GENESIS-HASH', 0, 'lecturers and students data')
+    }
+
+    static hash(timestamp, lastHash, nonce, data){
+        return SHA256(`${timestamp}${lastHash}${nonce}${data}`).toString();
+    }
+
+    static mineBlock(lastBlock, data){
+        const lastHash = lastBlock.hash;
+        
+        let nonce = 0;
+        let timestamp = Date.now();
+        let hash = Block.hash(timestamp, lastHash, nonce, data);
+
+        while(hash.substring(0, DIFFICULTY) !== '0'.repeat(DIFFICULTY)){
+            nonce++;
+            timestamp = Date.now();
+            hash = Block.hash(timestamp, lastHash, nonce, data);
+        }
+        
+
+        return new this(timestamp, lastHash, hash, nonce, data);
+    }
+
+    static blockHash(block){
+        const { timestamp, lastHash, nonce, data } = block;
+        return Block.hash(timestamp,lastHash,nonce,data);
     }
 
     toString(){
@@ -15,40 +47,10 @@ class Block{
         Timestamp : ${this.timestamp}
         Last Hash : ${this.lastHash.substring(0,10)}
         Hash      : ${this.hash.substring(0,10)}
-        Data      : ${this.data}
-        Nonce     : ${this.nonce}`;
+        Nonce     : ${this.nonce}
+        Data      : ${this.data}`;
     }
 
-    
-    static genesis(){
-        return new this('Genesis time','----','genesis-hash',[], 0);
-    }
-
-    static hash(timestamp,lastHash,data,nonce){
-        return SHA256(`${timestamp}${lastHash}${data}${nonce}`).toString();
-}
-
-static blockHash(block){
-    //destructuring
-    const { timestamp, lastHash, data, nonce} = block;
-    return Block.hash(timestamp,lastHash,data,nonce);
-}
-
-    static mineBlock(lastBlock,data){
-
-        
-        let timestamp = Date.now();
-        const lastHash = lastBlock.hash;
-        let hash = this.hash(timestamp, lastHash, data)
-        let nonce = 0;
-        hash = Block.hash(timestamp, lastHash, data, nonce);
-        while(hash.substr(0,DIFFICULTY) !== '0'.repeat(DIFFICULTY)){
-            nonce+=1;
-            timestamp = Date.now();
-            hash = Block.hash(timestamp, lastHash, data, nonce);
-        }
-        return new this(timestamp,lastHash,hash,data,nonce);
-    }
 
 }
 

@@ -1,14 +1,21 @@
 const WebSocket = require('ws');
 
+
 //declare the peer to peer server port 
 const P2P_PORT = process.env.P2P_PORT || 5001;
-
 //list of address to connect to
 const peers = process.env.PEERS ? process.env.PEERS.split(',') : [];
 
+const MESSAGE_TYPE = {
+    chain: 'CHAIN',
+    transaction: 'TRANSACTION',
+    clear_transactions: 'CLEAR_TRANSACTIONS'
+}
+
 class P2pserver{
-    constructor(blockchain){
+    constructor(blockchain, transactionPool){
         this.blockchain = blockchain;
+        this.transactionPool = transactionPool;
         this.sockets = [];
     }
 
@@ -35,10 +42,10 @@ class P2pserver{
         // push the socket too the socket array
         this.sockets.push(socket);
         console.log("Socket connected");
-
         this.messageHandler(socket);
-
+        //TODO: zeby 50% akceptowalo zmiane
         this.sendChain(socket);
+        
     }
 
     connectToPeers(){
@@ -58,17 +65,29 @@ class P2pserver{
 
     messageHandler(socket){
         //on recieving a message execute a callback function
-        socket.on('message', message =>{
+        socket.on('message',message =>{
             const data = JSON.parse(message);
-            this.blockchain.replaceChain(data)
-            console.log("data ", data);
-        })
+            switch(data.type){
+                case MESSAGE_TYPE.chain:
+                    this.blockchain.replaceChain(data.chain);
+                    break;
+                case MESSAGE_TYPE.transaction:
+                    this.transactionPool.add(data.transaction);
+                    break;
+                case MESSAGE_TYPE.clear_transactions:
+                    this.transactionPool.clear();
+                    break;
+            }
+            
+        });
     }
 
     sendChain(socket){
-        socket.send(JSON.stringify(this.blockchain.chain));
+        socket.send(JSON.stringify({
+            type: MESSAGE_TYPE.chain,
+            chain: this.blockchain.chain
+        }));
     }
-
 
     syncChain(){
         this.sockets.forEach(socket =>{
@@ -76,6 +95,28 @@ class P2pserver{
         });
     }
 
+    broadcastTransaction(transaction){
+        this.sockets.forEach(socket =>{
+            this.sendTransaction(socket,transaction);
+        });
+    }
+
+
+    sendTransaction(socket,transaction){
+         socket.send(JSON.stringify({
+             type: MESSAGE_TYPE.transaction,
+             transaction: transaction
+           })
+       );
+     }
+
+    broadcastClearTransactions(){
+        this.sockets.forEach(socket =>{
+            socket.send(JSON.stringify({type: MESSAGE_TYPE.clear_transactions}))
+        });
+    }
 }
+
+
 
 module.exports = P2pserver;
