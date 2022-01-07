@@ -5,10 +5,15 @@ const P2pServer = require('./p2p-server.js');
 const TransactionPool = require('../blockchain/transactionPool');
 const Transaction = require('../blockchain/transactions/transaction');
 const Miner = require('./miner');
+
+const {TypeEnum} = require('../blockchain/transactions/transactionEnums')
+
 const PresenceTransactionBuilder = require('../blockchain/transactions/builders/presenceTransactionBuilder');
 const CertificateTransactionBuilder = require('../blockchain/transactions/builders/certificateTransactionBuilder');
 const PartialGradeTransactionBuilder = require('../blockchain/transactions/builders/partialGradeTransactionBuilder');
 const FinalGradeTransactionBuilder = require('../blockchain/transactions/builders/finalGradeTransactionBuilder');
+
+const BlockchainIterator = require('../blockchain/iterators/BlockchainIterator');
 
 //get the port from the user or set the default port
 const HTTP_PORT = process.env.HTTP_PORT || 3001;
@@ -41,6 +46,17 @@ app.get('/transactions',(req,res)=>{
     res.json(transactionPool.transactions);
     });
 
+app.get('/transactions-certificate', (req, res) => {
+    let certificateIterator = new BlockchainIterator(blockchain, TypeEnum.certificate);
+    let tmp = new Array();
+    for(t of certificateIterator){
+        console.log(t);
+        tmp.push(t);
+    }
+    res.json(tmp);
+
+})
+
 app.get('/mine-transactions', (req, res)=>{
     const block = miner.mine();
     console.log(`New block added ${block.toString}`);
@@ -56,13 +72,13 @@ app.get('/mine-transactions', (req, res)=>{
 // });
 
 //create transactions
-app.post('/transact', (req, res) => {
-    const {data} = req.body;
-    const transaction = new Transaction(data);
-    transactionPool.add(transaction);
-    p2pserver.broadcastTransaction(transaction);
-    res.redirect('/transactions');
-})
+// app.post('/transact', (req, res) => {
+//     const {data} = req.body;
+//     const transaction = new Transaction(data);
+//     transactionPool.add(transaction);
+//     p2pserver.broadcastTransaction(transaction);
+//     res.redirect('/transactions');
+// })
 
 app.post('/transact-presence', (req, res) => {
     const {date, signature, masterSignature, lecturerID, presence, course, dateClass} = req.body;
