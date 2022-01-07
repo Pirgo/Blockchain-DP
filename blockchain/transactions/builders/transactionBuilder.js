@@ -22,6 +22,10 @@ class TransactionBuilder{
     setLecturerID(lecturerID){
         this.transaction.lecturerID = lecturerID;
     }
+
+    setVerification(verification){
+        this.transaction.verification = verification;
+    }
 }
 
 module.exports = TransactionBuilder;

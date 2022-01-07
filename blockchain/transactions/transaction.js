@@ -7,6 +7,7 @@ class Transaction{
     signature;
     masterSignature;
     lecturerID;
+    verification;
     constructor(){
         
     }

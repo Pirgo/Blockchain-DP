@@ -110,7 +110,7 @@ app.get('/mine-transactions', (req, res)=>{
 // })
 
 app.post('/transact-presence', (req, res) => {
-    const {date, signature, masterSignature, lecturerID, presence, course, dateClass} = req.body;
+    const {date, signature, masterSignature, lecturerID, verification, presence, course, dateClass} = req.body;
     const builder = new PresenceTransactionBuilder();
 
     builder.setID(ChainUtil.id());
@@ -118,6 +118,7 @@ app.post('/transact-presence', (req, res) => {
     builder.setSignature(signature);
     builder.setMasterSignature(masterSignature);
     builder.setLecturerID(lecturerID);
+    builder.setVerification(verification)
     builder.setPresence(presence);
     builder.setCourse(course);
     builder.setDateClass(dateClass);
@@ -130,7 +131,7 @@ app.post('/transact-presence', (req, res) => {
 })
 
 app.post('/transact-certificate', (req, res) => {
-    const {date, signature, masterSignature, lecturerID, certfier, dateOfAward, info, nameOfCertificate} = req.body;
+    const {date, signature, masterSignature, lecturerID, verification, certfier, dateOfAward, info, nameOfCertificate} = req.body;
     const builder = new CertificateTransactionBuilder();
 
     builder.setID(ChainUtil.id());
@@ -138,6 +139,7 @@ app.post('/transact-certificate', (req, res) => {
     builder.setSignature(signature);
     builder.setMasterSignature(masterSignature);
     builder.setLecturerID(lecturerID);
+    builder.setVerification(verification)
     builder.setCertifier(certfier);
     builder.setDateOfAward(dateOfAward);
     builder.setInfo(info);
@@ -151,7 +153,7 @@ app.post('/transact-certificate', (req, res) => {
 })
 
 app.post('/transact-partialGrade', (req, res) => {
-    const {date, signature, masterSignature, lecturerID, course, grade, weight} = req.body;
+    const {date, signature, masterSignature, lecturerID, verification, course, grade, weight} = req.body;
     const builder = new PartialGradeTransactionBuilder();
 
     builder.setID(ChainUtil.id());
@@ -159,6 +161,7 @@ app.post('/transact-partialGrade', (req, res) => {
     builder.setSignature(signature);
     builder.setMasterSignature(masterSignature);
     builder.setLecturerID(lecturerID);
+    builder.setVerification(verification)
     builder.setCourse(course);
     builder.setGrade(grade);
     builder.setWeight(weight);
@@ -171,7 +174,7 @@ app.post('/transact-partialGrade', (req, res) => {
 })
 
 app.post('/transact-finalGrade', (req, res) => {
-    const {date, signature, masterSignature, lecturerID, course, grade} = req.body;
+    const {date, signature, masterSignature, lecturerID, verification, course, grade} = req.body;
     const builder = new FinalGradeTransactionBuilder();
 
     builder.setID(ChainUtil.id());
@@ -179,6 +182,7 @@ app.post('/transact-finalGrade', (req, res) => {
     builder.setSignature(signature);
     builder.setMasterSignature(masterSignature);
     builder.setLecturerID(lecturerID);
+    builder.setVerification(verification)
     builder.setCourse(course);
     builder.setGrade(grade);
 
