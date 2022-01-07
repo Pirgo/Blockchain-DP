@@ -1,0 +1,13 @@
+.header-dark {
+    color:#f0f9ff;
+    background-color:#282d32;
+}
+
+.header-dark h1 {
+    text-align: center;
+    font-weight: bold;
+    font-size: 28px;
+    font-style: italic;
+    padding: 25px;
+    opacity: 0.9;
+}
