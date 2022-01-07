@@ -46,15 +46,42 @@ app.get('/transactions',(req,res)=>{
     res.json(transactionPool.transactions);
     });
 
+//api to view all certificates in chain
 app.get('/transactions-certificate', (req, res) => {
     let certificateIterator = new BlockchainIterator(blockchain, TypeEnum.certificate);
     let tmp = new Array();
     for(t of certificateIterator){
-        console.log(t);
         tmp.push(t);
     }
     res.json(tmp);
+})
 
+//
+app.get('/transactions-presence', (req, res) => {
+    let certificateIterator = new BlockchainIterator(blockchain, TypeEnum.presence);
+    let tmp = new Array();
+    for(t of certificateIterator){
+        tmp.push(t);
+    }
+    res.json(tmp);
+})
+
+app.get('/transactions-finalGrade', (req, res) => {
+    let certificateIterator = new BlockchainIterator(blockchain, TypeEnum.finalGrade);
+    let tmp = new Array();
+    for(t of certificateIterator){
+        tmp.push(t);
+    }
+    res.json(tmp);
+})
+
+app.get('/transactions-partialGrade', (req, res) => {
+    let certificateIterator = new BlockchainIterator(blockchain, TypeEnum.partialGrade);
+    let tmp = new Array();
+    for(t of certificateIterator){
+        tmp.push(t);
+    }
+    res.json(tmp);
 })
 
 app.get('/mine-transactions', (req, res)=>{
