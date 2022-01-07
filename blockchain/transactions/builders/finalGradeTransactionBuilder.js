@@ -1,34 +1,15 @@
 const FinalGradeTransaction = require('../finalGradeTransaction');
+const TransactionBuilder = require('./transactionBuilder');
 
-class FinalGradeTransactionBuilder{
-    transaction;
+class FinalGradeTransactionBuilder extends TransactionBuilder{
 
     constructor(){
+        super();
         this.reset();
     }
 
     reset(){
         this.transaction = new FinalGradeTransaction();
-    }
-
-    setID(id){
-        this.transaction.id = id;
-    }
-
-    setDate(date){
-        this.transaction.date = date;
-    }
-
-    setSignature(signature){
-        this.transaction.signature = signature;
-    }
-
-    setMasterSignature(masterSignature){
-        this.transaction.masterSignature = masterSignature;
-    }
-
-    setLecturerID(lecturerID){
-        this.transaction.lecturerID = lecturerID;
     }
 
     setCourse(course){
