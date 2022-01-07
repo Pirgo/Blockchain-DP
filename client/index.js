@@ -5,6 +5,10 @@ const P2pServer = require('./p2p-server.js');
 const TransactionPool = require('../blockchain/transactionPool');
 const Transaction = require('../blockchain/transactions/transaction');
 const Miner = require('./miner');
+const PresenceTransactionBuilder = require('../blockchain/transactions/builders/presenceTransactionBuilder');
+const CertificateTransactionBuilder = require('../blockchain/transactions/builders/certificateTransactionBuilder');
+const PartialGradeTransactionBuilder = require('../blockchain/transactions/builders/partialGradeTransactionBuilder');
+const FinalGradeTransactionBuilder = require('../blockchain/transactions/builders/finalGradeTransactionBuilder');
 
 //get the port from the user or set the default port
 const HTTP_PORT = process.env.HTTP_PORT || 3001;
@@ -58,6 +62,82 @@ app.post('/transact', (req, res) => {
     transactionPool.add(transaction);
     p2pserver.broadcastTransaction(transaction);
     res.redirect('/transactions');
+})
+
+app.post('/transact-presence', (req, res) => {
+    const {date, signature, masterSignature, lecturerID, presence, course, dateClass} = req.body;
+    const builder = new PresenceTransactionBuilder();
+
+    builder.setDate(date);
+    builder.setSignature(signature);
+    builder.setMasterSignature(masterSignature);
+    builder.setLecturerID(lecturerID);
+    builder.setPresence(presence);
+    builder.setCourse(course);
+    builder.setDateClass(dateClass);
+
+    const presenceTransaction = builder.getResult();
+    transactionPool.add(presenceTransaction);
+    p2pserver.broadcastTransaction(presenceTransaction);
+    res.redirect('/transactions');
+
+})
+
+app.post('/transact-certificate', (req, res) => {
+    const {date, signature, masterSignature, lecturerID, certfier, dateOfAward, info, nameOfCertificate} = req.body;
+    const builder = new CertificateTransactionBuilder();
+
+    builder.setDate(date);
+    builder.setSignature(signature);
+    builder.setMasterSignature(masterSignature);
+    builder.setLecturerID(lecturerID);
+    builder.setCertifier(certfier);
+    builder.setDateOfAward(dateOfAward);
+    builder.setInfo(info);
+    builder.setNameOfCertificate(nameOfCertificate);
+
+    const certificateTransaction = builder.getResult();
+    transactionPool.add(certificateTransaction);
+    p2pserver.broadcastTransaction(certificateTransaction);
+    res.redirect('/transactions');
+
+})
+
+app.post('/transact-partialGrade', (req, res) => {
+    const {date, signature, masterSignature, lecturerID, course, grade, weight} = req.body;
+    const builder = new PartialGradeTransactionBuilder();
+
+    builder.setDate(date);
+    builder.setSignature(signature);
+    builder.setMasterSignature(masterSignature);
+    builder.setLecturerID(lecturerID);
+    builder.setCourse(course);
+    builder.setGrade(grade);
+    builder.setWeight(weight);
+
+    const partialGradeTransaction = builder.getResult();
+    transactionPool.add(partialGradeTransaction);
+    p2pserver.broadcastTransaction(partialGradeTransaction);
+    res.redirect('/transactions');
+
+})
+
+app.post('/transact-finalGrade', (req, res) => {
+    const {date, signature, masterSignature, lecturerID, course, grade} = req.body;
+    const builder = new FinalGradeTransactionBuilder();
+
+    builder.setDate(date);
+    builder.setSignature(signature);
+    builder.setMasterSignature(masterSignature);
+    builder.setLecturerID(lecturerID);
+    builder.setCourse(course);
+    builder.setGrade(grade);
+
+    const finalGradeTransaction = builder.getResult();
+    transactionPool.add(finalGradeTransaction);
+    p2pserver.broadcastTransaction(finalGradeTransaction);
+    res.redirect('/transactions');
+
 })
 
 // app server configurations

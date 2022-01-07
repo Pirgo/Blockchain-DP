@@ -1,9 +1,16 @@
 const ChainUtil = require('../../chain-util');
 
 class Transaction{
-    constructor(data){
-        this.id = ChainUtil.id();
-        this.data = data;
+    id = ChainUtil.id();
+    type;
+    date;
+    signature;
+    masterSignature;
+    lecturerID;
+    constructor(){
+        
     }
+
+    //TODO: w tym miejscu moznaby sprawdzic czy transakcja jest poprwna tj. czy dodala ją uprawniona osoba
 }
 module.exports = Transaction;
