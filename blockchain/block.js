@@ -13,7 +13,7 @@ class Block{
 
     //TODO: wpisac do genesisa dane wykladowcó i studentów
     static genesis(){
-        return new this('Genesis', '----', 'GENESIS-HASH', 0, 'lecturers and students data')
+        return new this('Genesis', '----', 'GENESIS-HASH', 0, {lecturers: {0:"deszyfr"}})
     }
 
     static hash(timestamp, lastHash, nonce, data){

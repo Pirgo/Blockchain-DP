@@ -11,6 +11,10 @@ class PartialGradeTransactionBuilder{
         this.transaction = new PartialGradeTransaction();
     }
 
+    setID(id){
+        this.transaction.id = id;
+    }
+
     setDate(date){
         this.transaction.date = date;
     }

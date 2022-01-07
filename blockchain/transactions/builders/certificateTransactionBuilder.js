@@ -11,6 +11,10 @@ class CertificateTransactionBuilder{
         this.transaction = new CertificateTransaction();
     }
 
+    setID(id){
+        this.transaction.id = id;
+    }
+
     setDate(date){
         this.transaction.date = date;
     }

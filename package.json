@@ -24,6 +24,7 @@
     "crypto-js": "^4.1.1",
     "elliptic": "^6.5.4",
     "express": "^4.17.1",
+    "js-crypto-rsa": "^1.0.3",
     "uuid": "^8.3.2",
     "ws": "^8.3.0"
   }

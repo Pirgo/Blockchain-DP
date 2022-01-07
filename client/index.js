@@ -6,6 +6,8 @@ const TransactionPool = require('../blockchain/transactionPool');
 const Transaction = require('../blockchain/transactions/transaction');
 const Miner = require('./miner');
 
+const ChainUtil = require('../chain-util');
+
 const {TypeEnum} = require('../blockchain/transactions/transactionEnums')
 
 const PresenceTransactionBuilder = require('../blockchain/transactions/builders/presenceTransactionBuilder');
@@ -111,6 +113,7 @@ app.post('/transact-presence', (req, res) => {
     const {date, signature, masterSignature, lecturerID, presence, course, dateClass} = req.body;
     const builder = new PresenceTransactionBuilder();
 
+    builder.setID(ChainUtil.id());
     builder.setDate(date);
     builder.setSignature(signature);
     builder.setMasterSignature(masterSignature);
@@ -130,6 +133,7 @@ app.post('/transact-certificate', (req, res) => {
     const {date, signature, masterSignature, lecturerID, certfier, dateOfAward, info, nameOfCertificate} = req.body;
     const builder = new CertificateTransactionBuilder();
 
+    builder.setID(ChainUtil.id());
     builder.setDate(date);
     builder.setSignature(signature);
     builder.setMasterSignature(masterSignature);
@@ -150,6 +154,7 @@ app.post('/transact-partialGrade', (req, res) => {
     const {date, signature, masterSignature, lecturerID, course, grade, weight} = req.body;
     const builder = new PartialGradeTransactionBuilder();
 
+    builder.setID(ChainUtil.id());
     builder.setDate(date);
     builder.setSignature(signature);
     builder.setMasterSignature(masterSignature);
@@ -169,6 +174,7 @@ app.post('/transact-finalGrade', (req, res) => {
     const {date, signature, masterSignature, lecturerID, course, grade} = req.body;
     const builder = new FinalGradeTransactionBuilder();
 
+    builder.setID(ChainUtil.id());
     builder.setDate(date);
     builder.setSignature(signature);
     builder.setMasterSignature(masterSignature);

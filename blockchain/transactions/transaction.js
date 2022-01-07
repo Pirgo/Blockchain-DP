@@ -1,7 +1,7 @@
 const ChainUtil = require('../../chain-util');
 
 class Transaction{
-    id = ChainUtil.id();
+    id;
     type;
     date;
     signature;
@@ -12,5 +12,16 @@ class Transaction{
     }
 
     //TODO: w tym miejscu moznaby sprawdzic czy transakcja jest poprwna tj. czy dodala ją uprawniona osoba
+    checkMasterSignature(genesisBlock){
+        const lecturers = genesisBlock.data.lecturers;
+        if(this.lecturerID in lecturers){
+            keyDecrypt = lecturers[this.lecturerID];
+            
+        }
+        else{
+            return false;
+        }
+
+    }
 }
 module.exports = Transaction;

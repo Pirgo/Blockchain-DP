@@ -12,6 +12,10 @@ class PresenceTransactionBuilder{
         this.transaction = new PresenceTransaction();
     }
 
+    setID(id){
+        this.transaction.id = id;
+    }
+
     setDate(date){
         this.transaction.date = date;
     }

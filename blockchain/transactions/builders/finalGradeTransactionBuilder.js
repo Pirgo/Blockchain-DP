@@ -11,6 +11,10 @@ class FinalGradeTransactionBuilder{
         this.transaction = new FinalGradeTransaction();
     }
 
+    setID(id){
+        this.transaction.id = id;
+    }
+
     setDate(date){
         this.transaction.date = date;
     }
