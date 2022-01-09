@@ -19,6 +19,10 @@ class Blockchain{
         return true;    
     }
 
+    getGenesis(){
+        return this.chain[0];
+    }
+
     addBlock(data){
         const block = Block.mineBlock(this.chain[this.chain.length - 1], data);
         this.chain.push(block);

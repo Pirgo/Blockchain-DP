@@ -1,10 +1,14 @@
 class TransactionPool{
-    constructor(){
+    constructor(genesis){
         this.transactions = [];
+        this.genesis = genesis;
     }
 
     add(transaction){
-        this.transactions.push(transaction);
+        if(transaction.checkVerification(this.genesis)){
+            this.transactions.push(transaction);
+        }
+        
     }
 
     clear(){

@@ -28,7 +28,7 @@ app.use(bodyParser.json());
 
 // create a new blockchain instance
 const blockchain = new Blockchain();
-const transactionPool = new TransactionPool();
+const transactionPool = new TransactionPool(blockchain.getGenesis());
 const p2pserver = new P2pServer(blockchain, transactionPool);
 p2pserver.listen(); // starts the p2pserver
 
