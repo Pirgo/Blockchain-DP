@@ -26,6 +26,7 @@ class StudentTransactionFinder{
                 if(this.id == decryptedSignatureString.split('/')[0]){
                     res.push(t);
                 }
+            //umyslnie mutuje errora
             }catch(e){
                 
             }
