@@ -25,7 +25,12 @@ class Transaction{
                     type: 'spki',
                     format: 'pem'
                 })
-                const decrypted = crypto.publicDecrypt(publicKey, Buffer.from(this.verification, 'base64'))
+                try{
+                    const decrypted = crypto.publicDecrypt(publicKey, Buffer.from(this.verification, 'base64'))
+                }catch(e){
+                    return false;
+                }
+                
                 const decryptedString = decrypted.toString('base64');
                 if("verified" === decryptedString.split('/')[0]){
                     return true;
