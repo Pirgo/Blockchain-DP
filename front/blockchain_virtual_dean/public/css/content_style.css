@@ -20,3 +20,9 @@
     width: 15%;
     color: black;
 }
+
+
+.inside-content > table > tr > th{
+    padding-right: 25%;
+}
+

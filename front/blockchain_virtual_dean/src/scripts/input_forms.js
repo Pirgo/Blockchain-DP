@@ -23,7 +23,7 @@ function AddRate() {
     )
 }
 
-function AddFormRate() {
+function AddGradeForm() {
     ReactDOM.render(
       <AddRate />,
       document.getElementsByClassName('inside-content')[0]
@@ -59,4 +59,4 @@ function AddPresenceForm() {
     )
 }
 
-export {AddFormRate, AddPresenceForm}
+export {AddGradeForm, AddPresenceForm}
