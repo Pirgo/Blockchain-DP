@@ -7,7 +7,9 @@ class TransactionPool{
     add(transaction){
         if(transaction.checkVerification(this.genesis)){
             this.transactions.push(transaction);
+            return true;
         }
+        return false;
         
     }
 

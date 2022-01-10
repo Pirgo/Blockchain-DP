@@ -64,6 +64,26 @@ class ChainUtil{
         return "verified";
     }
 
+    static getVerificationKey(genesis, id){
+        const lecturers = genesis.data.lecturers;
+        for(let i = 0; i < lecturers.length; i++){
+            if(lecturers[i].ID == id){
+                return lecturers[i].key
+            }
+        }
+        return null;
+    }
+
+    static getSignatureKey(genesis, id){
+        const students = genesis.data.students;
+        for(let i = 0; i < students.length; i++){
+            if(students[i].ID == id){
+                return students[i].key
+            }
+        }
+        return null;
+    }
+
     static id(){
         return uuid.v1();
     }
