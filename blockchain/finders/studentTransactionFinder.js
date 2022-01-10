@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const ChainUtil = require('../../chain-util');
 
 class StudentTransactionFinder{
     constructor(id, keyDecryptString, iterator){
@@ -9,14 +10,7 @@ class StudentTransactionFinder{
 
 
     getTransactions(){
-        const passphrase = `Student${this.id}`
-        let keyDecrypt = crypto.createPrivateKey({
-            'key': this.keyDecryptString,
-            'type': 'pkcs8',
-            'format': 'pem',
-            'cipher': 'aes-256-cbc',
-            'passphrase': passphrase
-        })
+        const keyDecrypt = ChainUtil.createPrivateKey('Student', this.id, this.keyDecryptString)
         let res = [];
         for(let t of this.iterator){
             //TODO: ten if chyba nie jest potrzebny bo jak sprawdza sie nie swoje signature to wywala error, dlatego try catch, syf no ale coz taka libka

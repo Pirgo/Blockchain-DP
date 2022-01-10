@@ -20,19 +20,14 @@ class Transaction{
             console.log(lecturers[i]);
             if(this.lecturerID === lecturers[i].ID){
                 const keyString = lecturers[i].key;
-                const publicKey = crypto.createPublicKey({
-                    key : keyString,
-                    type: 'spki',
-                    format: 'pem'
-                })
+                const publicKey = ChainUtil.createPublicKey(keyString);
                 try{
-                    const decrypted = crypto.publicDecrypt(publicKey, Buffer.from(this.verification, 'base64'))
+                    var decryptedString = ChainUtil.decryptPublic(publicKey, this.verification);
                 }catch(e){
                     return false;
                 }
                 
-                const decryptedString = decrypted.toString('base64');
-                if("verified" === decryptedString.split('/')[0]){
+                if(ChainUtil.getVerificationString() === decryptedString){
                     return true;
                 }
                 return false;

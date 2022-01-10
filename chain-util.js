@@ -3,20 +3,67 @@ const uuid = require('uuid');
 // version 1 use timestamp to generate unique ids
 
 class ChainUtil{
-    static genKeyPair(){
-        return crypto.generateKeyPairSync("rsa", {
-            modulusLength: 2048,
-            publicKeyEncoding: {
-                'type': 'spki',
-                'format': 'pem',
-             },
-             privateKeyEncoding: {
-                'type': 'pkcs8',
-                'format': 'pem',
-                'cipher': 'aes-256-cbc',
-                'passphrase': 'passphrase'
-             }});
+    
+    static randomString(length) {
+        var result           = '';
+        var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var charactersLength = characters.length;
+        for ( var i = 0; i < length; i++ ) {
+          result += characters.charAt(Math.floor(Math.random() * 
+     charactersLength));
+       }
+       return result;
     }
+
+    static createPrivateKey(role, id, keyString){
+        const passphrase = `${role}${id}`
+        const key = crypto.createPrivateKey({
+            'key': keyString,
+            'type': 'pkcs8',
+            'format': 'pem',
+            'cipher': 'aes-256-cbc',
+            'passphrase': passphrase
+        })
+        return key;
+    }
+
+    static createPublicKey(keyString){
+        const key = crypto.createPublicKey({
+            'key': keyString,
+            'type': 'spki',
+            'format': 'pem'
+        })
+        return key;
+    }
+
+    static encryptPrivate(key, message){
+        const toEncrypt = message + "/" + ChainUtil.randomString(10);
+        const encrypted = crypto.privateEncrypt(key, Buffer.from(toEncrypt, 'base64'));
+        return encrypted.toString('base64');
+    }
+
+    static encryptPublic(key, message){
+        const toEncrypt = message + "/" + ChainUtil.randomString(10);
+        const encrypted = crypto.publicEncrypt(key, Buffer.from(toEncrypt, 'base64'));
+        return encrypted.toString('base64');
+    }
+
+    static decryptPrivate(key, message){
+        const decrypted = crypto.privateDecrypt(key, Buffer.from(message, 'base64'));
+        const decryptedString = decrypted.toString('base64');
+        return decryptedString.split('/')[0];
+    }
+    
+    static decryptPublic(key, message){
+        const decrypted = crypto.publicDecrypt(key, Buffer.from(message, 'base64'));
+        const decryptedString = decrypted.toString('base64');
+        return decryptedString.split('/')[0];
+    }
+
+    static getVerificationString(){
+        return "verified";
+    }
+
     static id(){
         return uuid.v1();
     }

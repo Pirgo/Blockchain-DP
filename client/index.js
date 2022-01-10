@@ -114,7 +114,15 @@ app.get('/mine-transactions', (req, res)=>{
 // })
 
 app.post('/transact-presence', (req, res) => {
-    const {date, signature, masterSignature, lecturerID, verification, presence, course, dateClass} = req.body;
+    const {date, studentID, masterKeyString, lecturerID, verificationKeyString, presence, course, dateClass} = req.body;
+    const masterSignatureKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, masterKeyString);
+    const verificationKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, verificationKeyString);
+    const signatureKey = ChainUtil.createPublicKey(blockchain.getSignatureKey(studentID))
+
+    const signature = ChainUtil.encryptPublic(signatureKey, studentID.toString());
+    const masterSignature = ChainUtil.encryptPrivate(masterSignatureKey, studentID.toString());
+    const verification = ChainUtil.encryptPrivate(verificationKey, ChainUtil.getVerificationString());
+
     const builder = new PresenceTransactionBuilder();
 
     builder.setID(ChainUtil.id());
@@ -135,7 +143,16 @@ app.post('/transact-presence', (req, res) => {
 })
 
 app.post('/transact-certificate', (req, res) => {
-    const {date, signature, masterSignature, lecturerID, verification, certfier, dateOfAward, info, nameOfCertificate} = req.body;
+    const {date, studentID, masterKeyString, lecturerID, verificationKeyString, certfier, dateOfAward, info, nameOfCertificate} = req.body;
+    const masterSignatureKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, masterKeyString);
+    const verificationKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, verificationKeyString);
+    const signatureKey = ChainUtil.createPublicKey(blockchain.getSignatureKey(studentID))
+
+    const signature = ChainUtil.encryptPublic(signatureKey, studentID.toString());
+    const masterSignature = ChainUtil.encryptPrivate(masterSignatureKey, studentID.toString());
+    const verification = ChainUtil.encryptPrivate(verificationKey, ChainUtil.getVerificationString());
+
+
     const builder = new CertificateTransactionBuilder();
 
     builder.setID(ChainUtil.id());
@@ -157,7 +174,15 @@ app.post('/transact-certificate', (req, res) => {
 })
 
 app.post('/transact-partialGrade', (req, res) => {
-    const {date, signature, masterSignature, lecturerID, verification, course, grade, weight} = req.body;
+    const {date, studentID, masterKeyString, lecturerID, verificationKeyString, course, grade, weight} = req.body;
+    const masterSignatureKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, masterKeyString);
+    const verificationKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, verificationKeyString);
+    const signatureKey = ChainUtil.createPublicKey(blockchain.getSignatureKey(studentID))
+
+    const signature = ChainUtil.encryptPublic(signatureKey, studentID.toString());
+    const masterSignature = ChainUtil.encryptPrivate(masterSignatureKey, studentID.toString());
+    const verification = ChainUtil.encryptPrivate(verificationKey, ChainUtil.getVerificationString());
+
     const builder = new PartialGradeTransactionBuilder();
 
     builder.setID(ChainUtil.id());
@@ -178,7 +203,15 @@ app.post('/transact-partialGrade', (req, res) => {
 })
 
 app.post('/transact-finalGrade', (req, res) => {
-    const {date, signature, masterSignature, lecturerID, verification, course, grade} = req.body;
+    const {date, studentID, masterKeyString, lecturerID, verificationKeyString, course, grade} = req.body;
+    const masterSignatureKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, masterKeyString);
+    const verificationKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, verificationKeyString);
+    const signatureKey = ChainUtil.createPublicKey(blockchain.getSignatureKey(studentID))
+
+    const signature = ChainUtil.encryptPublic(signatureKey, studentID.toString());
+    const masterSignature = ChainUtil.encryptPrivate(masterSignatureKey, studentID.toString());
+    const verification = ChainUtil.encryptPrivate(verificationKey, ChainUtil.getVerificationString());
+
     const builder = new FinalGradeTransactionBuilder();
 
     builder.setID(ChainUtil.id());
