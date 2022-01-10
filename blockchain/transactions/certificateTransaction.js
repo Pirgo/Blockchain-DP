@@ -10,6 +10,10 @@ class CertificateTransaction extends Transaction{
         super();
         this.type = TypeEnum.certificate;
     }
+
+    visit(visitor){
+        return visitor.visitCertificateTransaction(this);
+    }
 }
 
 module.exports = CertificateTransaction;

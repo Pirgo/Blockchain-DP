@@ -24,6 +24,18 @@ class PresenceTransactionBuilder extends TransactionBuilder{
         this.transaction.dateClass = dateClass;
     }
 
+    buildFromJSON(json){
+        this.setID(json.id);
+        this.setDate(json.date);
+        this.setSignature(json.signature);
+        this.setMasterSignature(json.masterSignature);
+        this.setLecturerID(json.lecturerID);
+        this.setVerification(json.verification);
+        this.setPresence(json.presence);
+        this.setCourse(json.course);
+        this.setDateClass(json.dateClass);
+    }
+
     getResult(){
         return this.transaction;
     }

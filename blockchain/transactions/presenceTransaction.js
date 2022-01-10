@@ -9,6 +9,10 @@ class PresenceTransaction extends Transaction{
         super();
         this.type = TypeEnum.presence;
     }
+
+    visit(visitor){
+        return visitor.visitPresenceTransaction(this);
+    }
 }
 
 module.exports = PresenceTransaction;

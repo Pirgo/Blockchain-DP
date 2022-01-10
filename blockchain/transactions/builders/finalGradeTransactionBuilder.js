@@ -20,6 +20,17 @@ class FinalGradeTransactionBuilder extends TransactionBuilder{
         this.transaction.grade = grade;
     }
 
+    buildFromJSON(json){
+        this.setID(json.id);
+        this.setDate(json.date);
+        this.setSignature(json.signature);
+        this.setMasterSignature(json.masterSignature);
+        this.setLecturerID(json.lecturerID);
+        this.setVerification(json.verification);
+        this.setGrade(json.grade);
+        this.setCourse(json.course);
+    }
+
     getResult(){
         return this.transaction;
     }

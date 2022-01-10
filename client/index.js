@@ -18,6 +18,7 @@ const FinalGradeTransactionBuilder = require('../blockchain/transactions/builder
 const BlockchainIterator = require('../blockchain/iterators/BlockchainIterator');
 
 const StudentTransactionFinder = require('../blockchain/finders/studentTransactionFinder');
+const StudentTransactionVisitor = require('../blockchain/transactions/visitors/studentTransactionVisitor');
 
 //get the port from the user or set the default port
 const HTTP_PORT = process.env.HTTP_PORT || 3001;
@@ -116,7 +117,30 @@ app.post('/find-transactions-student', (req, res)=>{
     const {id, keyDecryptString, type} = req.body;
     const iterator = new BlockchainIterator(blockchain, type);
     const finder = new StudentTransactionFinder(id, keyDecryptString, iterator);
-    res.json(finder.getTransactions());
+    const transactions = finder.getTransactions();
+    const visitor = new StudentTransactionVisitor()
+    let resArr = [];
+    for(t of transactions){
+        let builder;
+        switch(t.type){
+            case TypeEnum.certificate:
+                builder = new CertificateTransactionBuilder();
+                break;
+            case TypeEnum.presence:
+                builder = new PresenceTransactionBuilder();
+                break;
+            case TypeEnum.partialGrade:
+                builder = new PartialGradeTransactionBuilder();
+                break;
+            case TypeEnum.finalGrade:
+                builder = new FinalGradeTransactionBuilder();
+                break;
+        }
+        builder.buildFromJSON(t);
+        const res = builder.getResult();
+        resArr.push(res.visit(visitor));
+    }
+    res.json(resArr);
 })
 
 app.post('/transact-presence', (req, res) => {

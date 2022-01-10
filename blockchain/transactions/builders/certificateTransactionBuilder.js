@@ -28,6 +28,19 @@ class CertificateTransactionBuilder extends TransactionBuilder{
         this.transaction.nameOfCertificate = nameOfCertificate;
     }
 
+    buildFromJSON(json){
+        this.setID(json.id);
+        this.setDate(json.date);
+        this.setSignature(json.signature);
+        this.setMasterSignature(json.masterSignature);
+        this.setLecturerID(json.lecturerID);
+        this.setVerification(json.verification);
+        this.setCertifier(json.certfier);
+        this.setDateOfAward(json.dateOfAward);
+        this.setInfo(json.info);
+        this.setNameOfCertificate(json.nameOfCertificate);
+    }
+
     getResult(){
         return this.transaction;
     }
