@@ -99,6 +99,7 @@ class P2pserver {
                 case MESSAGE_TYPE.table:
                     this.peers = data.table
                     console.log(this.peers)
+                    this.multicast({"type":"none"})
                     break;
 
             }
@@ -118,7 +119,7 @@ class P2pserver {
     }
 
     broadcastTransaction(transaction) {
-        this.multicast(transaction)
+        this.multicast({"type":MESSAGE_TYPE.transaction,"transaction": transaction})
     }
 
 
