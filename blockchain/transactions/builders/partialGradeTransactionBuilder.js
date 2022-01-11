@@ -1,34 +1,15 @@
 const PartialGradeTransaction = require('../partialGradeTransaction');
+const TransactionBuilder = require('./transactionBuilder');
 
-class PartialGradeTransactionBuilder{
-    transaction;
+class PartialGradeTransactionBuilder extends TransactionBuilder{
 
     constructor(){
+        super();
         this.reset();
     }
 
     reset(){
         this.transaction = new PartialGradeTransaction();
-    }
-
-    setID(id){
-        this.transaction.id = id;
-    }
-
-    setDate(date){
-        this.transaction.date = date;
-    }
-
-    setSignature(signature){
-        this.transaction.signature = signature;
-    }
-
-    setMasterSignature(masterSignature){
-        this.transaction.masterSignature = masterSignature;
-    }
-
-    setLecturerID(lecturerID){
-        this.transaction.lecturerID = lecturerID;
     }
 
     setCourse(course){
@@ -40,7 +21,19 @@ class PartialGradeTransactionBuilder{
     }
 
     setWeight(weight){
-        this.transaction.weight;
+        this.transaction.weight = weight;
+    }
+
+    buildFromJSON(json){
+        this.setID(json.id);
+        this.setDate(json.date);
+        this.setSignature(json.signature);
+        this.setMasterSignature(json.masterSignature);
+        this.setLecturerID(json.lecturerID);
+        this.setVerification(json.verification);
+        this.setGrade(json.grade);
+        this.setCourse(json.course);
+        this.setWeight(json.weight);
     }
     
     getResult(){

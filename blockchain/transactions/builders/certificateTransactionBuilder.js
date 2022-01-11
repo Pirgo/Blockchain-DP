@@ -1,34 +1,15 @@
 const CertificateTransaction = require('../certificateTransaction');
+const TransactionBuilder = require('./transactionBuilder');
 
-class CertificateTransactionBuilder{
-    transaction;
-
+class CertificateTransactionBuilder extends TransactionBuilder{
+    
     constructor(){
+        super();
         this.reset();
     }
 
     reset(){
         this.transaction = new CertificateTransaction();
-    }
-
-    setID(id){
-        this.transaction.id = id;
-    }
-
-    setDate(date){
-        this.transaction.date = date;
-    }
-
-    setSignature(signature){
-        this.transaction.signature = signature;
-    }
-
-    setMasterSignature(masterSignature){
-        this.transaction.masterSignature = masterSignature;
-    }
-
-    setLecturerID(lecturerID){
-        this.transaction.lecturerID = lecturerID;
     }
 
     setCertifier(certfier){
@@ -45,6 +26,19 @@ class CertificateTransactionBuilder{
 
     setNameOfCertificate(nameOfCertificate){
         this.transaction.nameOfCertificate = nameOfCertificate;
+    }
+
+    buildFromJSON(json){
+        this.setID(json.id);
+        this.setDate(json.date);
+        this.setSignature(json.signature);
+        this.setMasterSignature(json.masterSignature);
+        this.setLecturerID(json.lecturerID);
+        this.setVerification(json.verification);
+        this.setCertifier(json.certfier);
+        this.setDateOfAward(json.dateOfAward);
+        this.setInfo(json.info);
+        this.setNameOfCertificate(json.nameOfCertificate);
     }
 
     getResult(){

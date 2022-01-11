@@ -17,6 +17,11 @@ const FinalGradeTransactionBuilder = require('../blockchain/transactions/builder
 
 const BlockchainIterator = require('../blockchain/iterators/BlockchainIterator');
 
+const StudentTransactionFinder = require('../blockchain/finders/studentTransactionFinder');
+const StudentTransactionVisitor = require('../blockchain/transactions/visitors/studentTransactionVisitor');
+const LecturerTransactionFinder = require('../blockchain/finders/lecturerTransactionFinder');
+const LecturerTransactionVisitor = require('../blockchain/transactions/visitors/lecturerTransactionVisitor');
+
 //get the port from the user or set the default port
 const HTTP_PORT = process.env.HTTP_PORT || 3001;
 
@@ -28,7 +33,7 @@ app.use(bodyParser.json());
 
 // create a new blockchain instance
 const blockchain = new Blockchain();
-const transactionPool = new TransactionPool();
+const transactionPool = new TransactionPool(blockchain.getGenesis());
 const p2pserver = new P2pServer(blockchain, transactionPool);
 p2pserver.listen(); // starts the p2pserver
 
@@ -109,8 +114,77 @@ app.get('/mine-transactions', (req, res)=>{
 //     res.redirect('/transactions');
 // })
 
+//TODO: sprawdzenie czy typ sie zgadza z mozliwymi
+app.post('/find-transactions-student', (req, res)=>{
+    const {id, keyDecryptString, type} = req.body;
+    const iterator = new BlockchainIterator(blockchain, type);
+    const finder = new StudentTransactionFinder(id, keyDecryptString, iterator);
+    const transactions = finder.getTransactions();
+    const visitor = new StudentTransactionVisitor()
+    let resArr = [];
+    for(t of transactions){
+        let builder;
+        switch(t.type){
+            case TypeEnum.certificate:
+                builder = new CertificateTransactionBuilder();
+                break;
+            case TypeEnum.presence:
+                builder = new PresenceTransactionBuilder();
+                break;
+            case TypeEnum.partialGrade:
+                builder = new PartialGradeTransactionBuilder();
+                break;
+            case TypeEnum.finalGrade:
+                builder = new FinalGradeTransactionBuilder();
+                break;
+        }
+        builder.buildFromJSON(t);
+        const res = builder.getResult();
+        resArr.push(res.visit(visitor));
+    }
+    res.json(resArr);
+})
+
+app.post('/find-transactions-lecturer', (req, res)=>{
+    const {id, keyDecryptString, type} = req.body;
+    const iterator = new BlockchainIterator(blockchain, type);
+    const finder = new LecturerTransactionFinder(id, iterator);
+    const transactions = finder.getTransactions();
+    const visitor = new LecturerTransactionVisitor(keyDecryptString);
+    let resArr = [];
+    for(t of transactions){
+        let builder;
+        switch(t.type){
+            case TypeEnum.certificate:
+                builder = new CertificateTransactionBuilder();
+                break;
+            case TypeEnum.presence:
+                builder = new PresenceTransactionBuilder();
+                break;
+            case TypeEnum.partialGrade:
+                builder = new PartialGradeTransactionBuilder();
+                break;
+            case TypeEnum.finalGrade:
+                builder = new FinalGradeTransactionBuilder();
+                break;
+        }
+        builder.buildFromJSON(t);
+        const res = builder.getResult();
+        resArr.push(res.visit(visitor));
+    }
+    res.json(resArr);
+})
+
 app.post('/transact-presence', (req, res) => {
-    const {date, signature, masterSignature, lecturerID, presence, course, dateClass} = req.body;
+    const {date, studentID, masterKeyString, lecturerID, verificationKeyString, presence, course, dateClass} = req.body;
+    const masterSignatureKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, masterKeyString);
+    const verificationKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, verificationKeyString);
+    const signatureKey = ChainUtil.createPublicKey(ChainUtil.getSignatureKey(blockchain.getGenesis(),studentID))
+
+    const signature = ChainUtil.encryptPublic(signatureKey, studentID.toString());
+    const masterSignature = ChainUtil.encryptPrivate(masterSignatureKey, studentID.toString());
+    const verification = ChainUtil.encryptPrivate(verificationKey, ChainUtil.getVerificationString());
+
     const builder = new PresenceTransactionBuilder();
 
     builder.setID(ChainUtil.id());
@@ -118,6 +192,7 @@ app.post('/transact-presence', (req, res) => {
     builder.setSignature(signature);
     builder.setMasterSignature(masterSignature);
     builder.setLecturerID(lecturerID);
+    builder.setVerification(verification)
     builder.setPresence(presence);
     builder.setCourse(course);
     builder.setDateClass(dateClass);
@@ -130,7 +205,16 @@ app.post('/transact-presence', (req, res) => {
 })
 
 app.post('/transact-certificate', (req, res) => {
-    const {date, signature, masterSignature, lecturerID, certfier, dateOfAward, info, nameOfCertificate} = req.body;
+    const {date, studentID, masterKeyString, lecturerID, verificationKeyString, certfier, dateOfAward, info, nameOfCertificate} = req.body;
+    const masterSignatureKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, masterKeyString);
+    const verificationKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, verificationKeyString);
+    const signatureKey = ChainUtil.createPublicKey(ChainUtil.getSignatureKey(blockchain.getGenesis(),studentID))
+
+    const signature = ChainUtil.encryptPublic(signatureKey, studentID.toString());
+    const masterSignature = ChainUtil.encryptPrivate(masterSignatureKey, studentID.toString());
+    const verification = ChainUtil.encryptPrivate(verificationKey, ChainUtil.getVerificationString());
+
+
     const builder = new CertificateTransactionBuilder();
 
     builder.setID(ChainUtil.id());
@@ -138,6 +222,7 @@ app.post('/transact-certificate', (req, res) => {
     builder.setSignature(signature);
     builder.setMasterSignature(masterSignature);
     builder.setLecturerID(lecturerID);
+    builder.setVerification(verification)
     builder.setCertifier(certfier);
     builder.setDateOfAward(dateOfAward);
     builder.setInfo(info);
@@ -151,7 +236,15 @@ app.post('/transact-certificate', (req, res) => {
 })
 
 app.post('/transact-partialGrade', (req, res) => {
-    const {date, signature, masterSignature, lecturerID, course, grade, weight} = req.body;
+    const {date, studentID, masterKeyString, lecturerID, verificationKeyString, course, grade, weight} = req.body;
+    const masterSignatureKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, masterKeyString);
+    const verificationKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, verificationKeyString);
+    const signatureKey = ChainUtil.createPublicKey(ChainUtil.getSignatureKey(blockchain.getGenesis(),studentID))
+
+    const signature = ChainUtil.encryptPublic(signatureKey, studentID.toString());
+    const masterSignature = ChainUtil.encryptPrivate(masterSignatureKey, studentID.toString());
+    const verification = ChainUtil.encryptPrivate(verificationKey, ChainUtil.getVerificationString());
+
     const builder = new PartialGradeTransactionBuilder();
 
     builder.setID(ChainUtil.id());
@@ -159,6 +252,7 @@ app.post('/transact-partialGrade', (req, res) => {
     builder.setSignature(signature);
     builder.setMasterSignature(masterSignature);
     builder.setLecturerID(lecturerID);
+    builder.setVerification(verification)
     builder.setCourse(course);
     builder.setGrade(grade);
     builder.setWeight(weight);
@@ -171,7 +265,15 @@ app.post('/transact-partialGrade', (req, res) => {
 })
 
 app.post('/transact-finalGrade', (req, res) => {
-    const {date, signature, masterSignature, lecturerID, course, grade} = req.body;
+    const {date, studentID, masterKeyString, lecturerID, verificationKeyString, course, grade} = req.body;
+    const masterSignatureKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, masterKeyString);
+    const verificationKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, verificationKeyString);
+    const signatureKey = ChainUtil.createPublicKey(ChainUtil.getSignatureKey(blockchain.getGenesis(),studentID))
+
+    const signature = ChainUtil.encryptPublic(signatureKey, studentID.toString());
+    const masterSignature = ChainUtil.encryptPrivate(masterSignatureKey, studentID.toString());
+    const verification = ChainUtil.encryptPrivate(verificationKey, ChainUtil.getVerificationString());
+
     const builder = new FinalGradeTransactionBuilder();
 
     builder.setID(ChainUtil.id());
@@ -179,6 +281,7 @@ app.post('/transact-finalGrade', (req, res) => {
     builder.setSignature(signature);
     builder.setMasterSignature(masterSignature);
     builder.setLecturerID(lecturerID);
+    builder.setVerification(verification)
     builder.setCourse(course);
     builder.setGrade(grade);
 

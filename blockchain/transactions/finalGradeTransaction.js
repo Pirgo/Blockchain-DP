@@ -8,6 +8,10 @@ class FinalGradeTransaction extends Transaction{
         super();
         this.type = TypeEnum.finalGrade;
     }
+
+    visit(visitor){
+        return visitor.visitFinalGradeTransaction(this);
+    }
 }
 
 module.exports = FinalGradeTransaction;

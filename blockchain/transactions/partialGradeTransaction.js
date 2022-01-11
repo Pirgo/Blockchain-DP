@@ -10,6 +10,10 @@ class PartialGradeTransaction extends Transaction{
         super();
         this.type = TypeEnum.partialGrade;
     }
+
+    visit(visitor){
+        return visitor.visitPartialGrade(this);
+    }
 }
 
 module.exports = PartialGradeTransaction;

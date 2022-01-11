@@ -1,4 +1,5 @@
 const SHA256 = require('crypto-js/sha256');
+const fs = require('fs');
 const DIFFICULTY = 5;
 
 //TODO: zmienic data na transakcje
@@ -11,9 +12,19 @@ class Block{
         this.data = data;
     }
 
-    //TODO: wpisac do genesisa dane wykladowcó i studentów
+    //TODO: narazie jest wpisany gdzie powinien byc plik i jak ma sie nazywac, pewnie do zmiany
     static genesis(){
-        return new this('Genesis', '----', 'GENESIS-HASH', 0, {lecturers: {0:"deszyfr"}})
+        const records = JSON.parse(fs.readFileSync('datagenerator/records.json'));
+        let data = {lecturers : [], students: []};
+        records.forEach(r =>{
+            if(r.role === "Lecturer"){
+                data.lecturers.push(r);
+            }
+            else if(r.role === "Student"){
+                data.students.push(r);
+            }
+        })
+        return new this('Genesis', '----', 'GENESIS-HASH', 0, data)
     }
 
     static hash(timestamp, lastHash, nonce, data){
