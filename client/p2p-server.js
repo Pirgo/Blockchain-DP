@@ -31,13 +31,11 @@ class P2pserver {
 
     // create a new p2p server and connections
     multicast(msg) {
-        console.log("multicast")
         this.peers.forEach(peer => {
             this.send(msg, peer.addr, peer.port)
         });
     }
     send(msg, addr, port) {
-        console.log("send")
         let msgStr = JSON.stringify(msg)
         server.send(msgStr, 0, msgStr.length, port, addr, function (err, bytes) {
             if (err) throw err;
@@ -85,7 +83,8 @@ class P2pserver {
 
     messageHandler() {
         //on recieving a message execute a callback function
-        server.on('message',  (message, remote)=> {
+        let p2p = this
+        server.on('message', function (message, remote) {
             const data = JSON.parse(message);
             console.log(data)
             switch (data.type) {
@@ -99,9 +98,9 @@ class P2pserver {
                     this.transactionPool.clear();
                     break;
                 case MESSAGE_TYPE.table:
-                    this.peers = data.table
-                    console.log(this.peers)
-                    this.multicast({"type":"none"})
+                    p2p.peers = data.table
+                    console.log(p2p.peers)
+                    //p2p.multicast({"type":"none"})
                     break;
 
             }
@@ -121,7 +120,6 @@ class P2pserver {
     }
 
     broadcastTransaction(transaction) {
-        console.log("broadcast transaction")
         this.multicast({"type":MESSAGE_TYPE.transaction,"transaction": transaction})
     }
 
