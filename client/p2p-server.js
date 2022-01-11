@@ -84,7 +84,7 @@ class P2pserver {
     messageHandler() {
         //on recieving a message execute a callback function
         let p2p = this
-        server.on('message', function (message, remote) {
+        server.on('message', (message, remote) => {
             const data = JSON.parse(message);
             console.log(data)
             switch (data.type) {
@@ -116,7 +116,7 @@ class P2pserver {
     }
 
     syncChain() {
-        this.sendChain
+        this.sendChain()
     }
 
     broadcastTransaction(transaction) {
