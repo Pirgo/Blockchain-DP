@@ -1,7 +1,7 @@
 var REMOTEPORT = 5001
 var PORT = 5002;
 var HOST = '192.168.100.52';
-var REMOTEHOST  = '192.168.100.52'
+var REMOTEHOST  = '172.104.240.26'
 
 var dgram = require('dgram');
 var message = {type:"register"};

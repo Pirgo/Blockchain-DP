@@ -35,7 +35,7 @@ app.use(bodyParser.json());
 const blockchain = new Blockchain();
 const transactionPool = new TransactionPool(blockchain.getGenesis());
 const p2pserver = new P2pServer(blockchain, transactionPool);
-p2pserver.listen(); // starts the p2pserver
+//p2pserver.listen(); // starts the p2pserver
 
 const miner = new Miner(blockchain, transactionPool, p2pserver);
 
