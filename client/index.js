@@ -19,6 +19,8 @@ const BlockchainIterator = require('../blockchain/iterators/BlockchainIterator')
 
 const StudentTransactionFinder = require('../blockchain/finders/studentTransactionFinder');
 const StudentTransactionVisitor = require('../blockchain/transactions/visitors/studentTransactionVisitor');
+const LecturerTransactionFinder = require('../blockchain/finders/lecturerTransactionFinder');
+const LecturerTransactionVisitor = require('../blockchain/transactions/visitors/lecturerTransactionVisitor');
 
 //get the port from the user or set the default port
 const HTTP_PORT = process.env.HTTP_PORT || 3001;
@@ -119,6 +121,36 @@ app.post('/find-transactions-student', (req, res)=>{
     const finder = new StudentTransactionFinder(id, keyDecryptString, iterator);
     const transactions = finder.getTransactions();
     const visitor = new StudentTransactionVisitor()
+    let resArr = [];
+    for(t of transactions){
+        let builder;
+        switch(t.type){
+            case TypeEnum.certificate:
+                builder = new CertificateTransactionBuilder();
+                break;
+            case TypeEnum.presence:
+                builder = new PresenceTransactionBuilder();
+                break;
+            case TypeEnum.partialGrade:
+                builder = new PartialGradeTransactionBuilder();
+                break;
+            case TypeEnum.finalGrade:
+                builder = new FinalGradeTransactionBuilder();
+                break;
+        }
+        builder.buildFromJSON(t);
+        const res = builder.getResult();
+        resArr.push(res.visit(visitor));
+    }
+    res.json(resArr);
+})
+
+app.post('/find-transactions-lecturer', (req, res)=>{
+    const {id, keyDecryptString, type} = req.body;
+    const iterator = new BlockchainIterator(blockchain, type);
+    const finder = new LecturerTransactionFinder(id, iterator);
+    const transactions = finder.getTransactions();
+    const visitor = new LecturerTransactionVisitor(keyDecryptString);
     let resArr = [];
     for(t of transactions){
         let builder;
