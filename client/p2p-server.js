@@ -11,7 +11,7 @@ const MESSAGE_TYPE = {
     chain: 'CHAIN',
     transaction: 'TRANSACTION',
     clear_transactions: 'CLEAR_TRANSACTIONS',
-    table: 'TABLE'   //tabela z adresami i portami peerów
+    table: 'table'   //tabela z adresami i portami peerów
 
 }
 
@@ -31,11 +31,13 @@ class P2pserver {
 
     // create a new p2p server and connections
     multicast(msg) {
+        console.log("multicast")
         this.peers.forEach(peer => {
             this.send(msg, peer.addr, peer.port)
         });
     }
     send(msg, addr, port) {
+        console.log("send")
         let msgStr = JSON.stringify(msg)
         server.send(msgStr, 0, msgStr.length, port, addr, function (err, bytes) {
             if (err) throw err;
@@ -83,7 +85,7 @@ class P2pserver {
 
     messageHandler() {
         //on recieving a message execute a callback function
-        server.on('message', function (message, remote) {
+        server.on('message',  (message, remote)=> {
             const data = JSON.parse(message);
             console.log(data)
             switch (data.type) {
@@ -119,6 +121,7 @@ class P2pserver {
     }
 
     broadcastTransaction(transaction) {
+        console.log("broadcast transaction")
         this.multicast({"type":MESSAGE_TYPE.transaction,"transaction": transaction})
     }
 
