@@ -1,0 +1,16 @@
+.nav-bar button {
+    min-width: 25%;
+    text-align: center;
+    opacity: 0.8;
+    float: left;
+    text-decoration: none;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    background: #322D28;
+    border: none;
+}
+.nav-bar button:hover {
+    color: #322D28;
+    background-color: #f0f9ff;
+    cursor: pointer;
+}

@@ -2,8 +2,8 @@
 const dgram = require('dgram');
 const TransactionBuilder = require('../blockchain/transactions/builders/transactionBuilder');
 //declare the peer to peer server port 
-const P2P_PORT = process.env.P2P_PORT || 5001;
-const P2P_ADDR = "192.168.0.52"   //TODO
+const P2P_PORT = process.env.P2P_PORT || 5005;
+const P2P_ADDR = "192.168.0.66"   //TODO
 //list of address to connect to
 //const peers = process.env.PEERS ? process.env.PEERS.split(',') : [];
 const server = dgram.createSocket('udp4');
