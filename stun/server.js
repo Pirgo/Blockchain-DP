@@ -2,22 +2,36 @@ const PORT = 5001;
 const HOST = '192.168.100.52'; //TODO
 const TIME = 120000 //2 minuty
 var dgram = require('dgram');
+const { parse } = require('querystring');
 
-var server = dgram.createSocket('udp4');
+const server = dgram.createSocket('udp4');
 
 var stunTable = new Map()
 //stunTable.set("192.168.100.52", { "port": PORT, timeout })
 
 function timeoutHandler(key) {
-    return setTimeout(() => { stunTable.delete(key) }, TIME)
+    return setTimeout(() => {
+        stunTable.delete(key)
+        notify()
+    }, TIME)
 }
-function send(msg,addr,port){
+function send(msg, addr, port) {
     msgStr = JSON.stringify(msg)
-    server.send(msgStr, 0, msgStr.length, port, addr, function(err, bytes) {
+    server.send(msgStr, 0, msgStr.length, port, addr, function (err, bytes) {
         if (err) throw err;
-        console.log('UDP message sent to ' + addr +':'+ port); 
-      });
-
+        console.log('UDP message sent to ' + addr + ':' + port);
+    });
+}
+function notify() {  //rozesłanie tablicy stun wszystkim peerom
+    toSend = []
+    stunTable.forEach((val, key, map) => {
+        host = key.split(":")   //oddzielenie adresu od portu
+        host[1] = parseInt(host[1])
+        toSend.push({ "addr": host[0], "port": host[1] })
+    })
+    toSend.forEach(element => {
+        send({ "type": "table", "table": toSend }, element.addr, element.port)
+    });
 }
 server.on('listening', function () {
     var address = server.address();
@@ -38,18 +52,16 @@ server.on('message', function (message, remote) {
     switch (parsedMsg.type) {
         case "register":    //rejestracja adresu i portu
             console.log("registering new peer")
-            stunTable.set(remote.address, { "port": remote.port, "timeout": timeoutHandler(remote.address) })
+            stunTable.set(remote.address+":"+remote.port,  timeoutHandler(remote.address))
+            notify()
             break;
         case "alive":   //odpowiedź na "ping" - peer uczestniczy w sieci
             let peer = stunTable.get(remote.address)
-            clearTimeout(peer.timeout)
+            clearTimeout(peer)
             peer.timeout = timeoutHandler(peer.address) //odnowienie dzierżawy w tablicy peerów
         case "ask":     //pytanie o adresy:porty innych peerów
-            toSend = [] 
-            stunTable.forEach((val, key, map) => {
-                toSend.push({ "addr": key, "port": val.port })
-            })
-            send({"type":"table","table":toSend},remote.address,remote.port)
+            console.warn("type:'ask' deprecated")
+            notify          
             break
         default:
             console.warn("unrecognized message type")
