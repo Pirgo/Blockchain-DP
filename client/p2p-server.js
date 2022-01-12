@@ -85,6 +85,8 @@ class P2pserver {
     messageHandler() {
         //on recieving a message execute a callback function
         server.on('message',  (message, remote) => {
+
+
             const data = JSON.parse(message);
             console.log(data)
             switch (data.type) {
