@@ -1,8 +1,15 @@
+const Transaction = require("../transaction");
+
 class TransactionBuilder{
     transaction;
     constructor(){
-
+        this.reset();
     }
+
+    reset(){
+        this.transaction = new Transaction();
+    }
+
     setID(id){
         this.transaction.id = id;
     }
@@ -25,6 +32,20 @@ class TransactionBuilder{
 
     setVerification(verification){
         this.transaction.verification = verification;
+    }
+
+    buildFromJSON(json){
+        console.log(json)
+        this.setID(json.id);
+        this.setDate(json.date);
+        this.setSignature(json.signature);
+        this.setMasterSignature(json.masterSignature);
+        this.setLecturerID(json.lecturerID);
+        this.setVerification(json.verification);
+    }
+
+    getResult(){
+        return this.transaction;
     }
 }
 

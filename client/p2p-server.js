@@ -1,8 +1,9 @@
 //const WebSocket = require('ws');
 const dgram = require('dgram');
+const TransactionBuilder = require('../blockchain/transactions/builders/transactionBuilder');
 //declare the peer to peer server port 
 const P2P_PORT = process.env.P2P_PORT || 5001;
-const P2P_ADDR = "192.168.100.52"   //TODO
+const P2P_ADDR = "192.168.0.52"   //TODO
 //list of address to connect to
 //const peers = process.env.PEERS ? process.env.PEERS.split(',') : [];
 const server = dgram.createSocket('udp4');
@@ -83,8 +84,7 @@ class P2pserver {
 
     messageHandler() {
         //on recieving a message execute a callback function
-        let p2p = this
-        server.on('message', function (message, remote) {
+        server.on('message',  (message, remote) => {
             const data = JSON.parse(message);
             console.log(data)
             switch (data.type) {
@@ -92,14 +92,16 @@ class P2pserver {
                     this.blockchain.replaceChain(data.chain);
                     break;
                 case MESSAGE_TYPE.transaction:
-                    this.transactionPool.add(data.transaction);
+                    const builder = new TransactionBuilder();
+                    builder.buildFromJSON(data.transaction);
+                    const transaction = builder.getResult();
+                    this.transactionPool.add(transaction);
                     break;
                 case MESSAGE_TYPE.clear_transactions:
                     this.transactionPool.clear();
                     break;
                 case MESSAGE_TYPE.table:
-                    p2p.peers = data.table
-                    console.log(p2p.peers)
+                    this.peers = data.table
                     //p2p.multicast({"type":"none"})
                     break;
 
@@ -116,7 +118,7 @@ class P2pserver {
     }
 
     syncChain() {
-        this.sendChain
+        this.sendChain();
     }
 
     broadcastTransaction(transaction) {
