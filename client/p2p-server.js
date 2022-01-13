@@ -3,16 +3,19 @@ const dgram = require('dgram');
 const TransactionBuilder = require('../blockchain/transactions/builders/transactionBuilder');
 //declare the peer to peer server port 
 const P2P_PORT = process.env.P2P_PORT || 5001;
-const P2P_ADDR = "192.168.0.52"   //TODO
+//const P2P_ADDR = "192.168.100.52"   
+const STUN_ADDR = '172.104.240.26'
+const STUN_PORT = 5001
+const KEEP_ALIVE_INTERVAL = 30000
 //list of address to connect to
 //const peers = process.env.PEERS ? process.env.PEERS.split(',') : [];
 const server = dgram.createSocket('udp4');
-server.bind(P2P_PORT, P2P_ADDR);
+
 const MESSAGE_TYPE = {
     chain: 'CHAIN',
     transaction: 'TRANSACTION',
     clear_transactions: 'CLEAR_TRANSACTIONS',
-    table: 'table'   //tabela z adresami i portami peerów
+    table: 'table'   //tabela z adresami i portami peerów //todo uppercase na serwerze
 
 }
 
@@ -21,13 +24,18 @@ class P2pserver {
         this.blockchain = blockchain;
         this.transactionPool = transactionPool;
         this.peers = [];
+        this.ip = Object.values(require('os').networkInterfaces()).reduce((r, list) => r.concat(list.reduce((rr, i) => rr.concat(i.family === 'IPv4' && !i.internal && i.address || []), [])), [])[0]
+        server.bind(P2P_PORT, this.ip);
         server.on('listening', function () {
             var address = server.address();
             console.log('UDP Server listening on ' + address.address + ':' + address.port);
         });
         this.messageHandler()
-        this.send({"type":"register"},'172.104.240.26',5001)
-        this.send({"type":"ask"},'172.104.240.26',5001)
+        this.send({ "type": "register" }, STUN_ADDR, STUN_PORT)
+        setInterval(() => {
+            this.send({ "type": "alive" }, STUN_ADDR, STUN_PORT)    //informowanie o aktywności/uczestnictwie
+            console.log("im alive")
+        }, KEEP_ALIVE_INTERVAL);
     }
 
     // create a new p2p server and connections
@@ -40,7 +48,7 @@ class P2pserver {
         let msgStr = JSON.stringify(msg)
         server.send(msgStr, 0, msgStr.length, port, addr, function (err, bytes) {
             if (err) throw err;
-            console.log('UDP message sent to ' + addr + ':' + port);
+            //console.log('UDP message sent to ' + addr + ':' + port);
         });
     }
     listen() {
@@ -84,7 +92,7 @@ class P2pserver {
 
     messageHandler() {
         //on recieving a message execute a callback function
-        server.on('message',  (message, remote) => {
+        server.on('message', (message, remote) => {
 
 
             const data = JSON.parse(message);
@@ -104,7 +112,8 @@ class P2pserver {
                     break;
                 case MESSAGE_TYPE.table:
                     this.peers = data.table
-                    //p2p.multicast({"type":"none"})
+                    //console.log(this.peers)
+                    this.multicast({ "type": "none" })
                     break;
 
             }
@@ -124,7 +133,7 @@ class P2pserver {
     }
 
     broadcastTransaction(transaction) {
-        this.multicast({"type":MESSAGE_TYPE.transaction,"transaction": transaction})
+        this.multicast({ "type": MESSAGE_TYPE.transaction, "transaction": transaction })
     }
 
 
@@ -137,9 +146,9 @@ class P2pserver {
     // }
 
     broadcastClearTransactions() {
-        
-            this.multicast({ type: MESSAGE_TYPE.clear_transactions })
-        
+
+        this.multicast({ type: MESSAGE_TYPE.clear_transactions })
+
     }
 }
 
