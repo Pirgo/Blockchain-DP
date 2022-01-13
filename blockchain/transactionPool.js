@@ -1,21 +1,25 @@
-class TransactionPool{
-    constructor(genesis){
-        this.transactions = [];
-        this.genesis = genesis;
-    }
+const TransactionBuilder = require('./transactions/builders/transactionBuilder')
 
-    add(transaction){
-       if(transaction.checkVerification(this.genesis)){
-            this.transactions.push(transaction);
-            return true;
-       }
-       return false;
-        
-    }
+class TransactionPool {
+  constructor(genesis) {
+    this.transactions = [];
+    this.genesis = genesis;
+  }
 
-    clear(){
-        this.transactions = [];
+  add(data) {
+    const builder = new TransactionBuilder();
+    builder.buildFromJSON(data);
+    const transaction = builder.getResult();
+    if (transaction.checkVerification(this.genesis)) {
+      this.transactions.push(data);
+      return true;
     }
+    return false;
+  }
+
+  clear() {
+    this.transactions = [];
+  }
 }
 
 module.exports = TransactionPool;

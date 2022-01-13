@@ -1,5 +1,5 @@
 const PORT = 5001;
-const HOST = '192.168.100.52'; //TODO
+const HOST = '172.104.240.26'; //TODO
 const TIME = 120000 //2 minuty
 var dgram = require('dgram');
 const { parse } = require('querystring');

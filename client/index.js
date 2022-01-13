@@ -198,7 +198,6 @@ app.post('/transact-presence', (req, res) => {
     builder.setDateClass(dateClass);
 
     const presenceTransaction = builder.getResult();
-    transactionPool.add(presenceTransaction);
     p2pserver.broadcastTransaction(presenceTransaction);
     res.redirect('/transactions');
 
@@ -229,7 +228,6 @@ app.post('/transact-certificate', (req, res) => {
     builder.setNameOfCertificate(nameOfCertificate);
 
     const certificateTransaction = builder.getResult();
-    transactionPool.add(certificateTransaction);
     p2pserver.broadcastTransaction(certificateTransaction);
     res.redirect('/transactions');
 
@@ -258,7 +256,6 @@ app.post('/transact-partialGrade', (req, res) => {
     builder.setWeight(weight);
 
     const partialGradeTransaction = builder.getResult();
-    transactionPool.add(partialGradeTransaction);
     p2pserver.broadcastTransaction(partialGradeTransaction);
     res.redirect('/transactions');
 
@@ -286,7 +283,6 @@ app.post('/transact-finalGrade', (req, res) => {
     builder.setGrade(grade);
 
     const finalGradeTransaction = builder.getResult();
-    transactionPool.add(finalGradeTransaction);
     p2pserver.broadcastTransaction(finalGradeTransaction);
     res.redirect('/transactions');
 
