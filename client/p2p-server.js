@@ -34,7 +34,7 @@ class P2pserver {
         this.send({ "type": "register" }, STUN_ADDR, STUN_PORT)
         setInterval(() => {
             this.send({ "type": "alive" }, STUN_ADDR, STUN_PORT)    //informowanie o aktywności/uczestnictwie
-            console.log("im alive")
+            //console.log("im alive")
         }, KEEP_ALIVE_INTERVAL);
     }
 
