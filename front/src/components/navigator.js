@@ -4,6 +4,9 @@ import { Link } from "react-router-dom";
 export default class Navigator extends Component {
     constructor() {
         super();
+        this.state = {
+            
+        }
     }
 
 

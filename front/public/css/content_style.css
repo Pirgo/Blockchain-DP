@@ -1,6 +1,5 @@
-.content {
-    flex-grow: 1;
-    background-color: #282832;
+input {
+    color: black;
 }
 
 .inside-content {
@@ -26,6 +25,3 @@
     padding-right: 25%;
 }
 
-h2 {
-    color: red;
-}

@@ -27,6 +27,9 @@ const HTTP_PORT = process.env.HTTP_PORT || 3001;
 
 //create a new app
 const app  = express();
+const cors = require("cors");
+
+app.use(cors())
 
 //using the blody parser middleware
 app.use(bodyParser.json());
@@ -116,31 +119,37 @@ app.get('/mine-transactions', (req, res)=>{
 
 //TODO: sprawdzenie czy typ sie zgadza z mozliwymi
 app.post('/find-transactions-student', (req, res)=>{
-    const {id, keyDecryptString, type} = req.body;
+    let {id, keyDecryptString, type} = req.body;
+    keyDecryptString = keyDecryptString.split('\\n').join('\n');
     const iterator = new BlockchainIterator(blockchain, type);
     const finder = new StudentTransactionFinder(id, keyDecryptString, iterator);
     const transactions = finder.getTransactions();
     const visitor = new StudentTransactionVisitor()
     let resArr = [];
     for(t of transactions){
-        let builder;
-        switch(t.type){
-            case TypeEnum.certificate:
-                builder = new CertificateTransactionBuilder();
-                break;
-            case TypeEnum.presence:
-                builder = new PresenceTransactionBuilder();
-                break;
-            case TypeEnum.partialGrade:
-                builder = new PartialGradeTransactionBuilder();
-                break;
-            case TypeEnum.finalGrade:
-                builder = new FinalGradeTransactionBuilder();
-                break;
+        if(t.type != undefined)
+        {
+            let builder;
+        
+            switch(t.type){
+                case TypeEnum.certificate:
+                    builder = new CertificateTransactionBuilder();
+                    break;
+                case TypeEnum.presence:
+                    builder = new PresenceTransactionBuilder();
+                    break;
+                case TypeEnum.partialGrade:
+                    builder = new PartialGradeTransactionBuilder();
+                    break;
+                case TypeEnum.finalGrade:
+                    builder = new FinalGradeTransactionBuilder();
+                    break;
         }
         builder.buildFromJSON(t);
         const res = builder.getResult();
         resArr.push(res.visit(visitor));
+        }
+        
     }
     res.json(resArr);
 })
