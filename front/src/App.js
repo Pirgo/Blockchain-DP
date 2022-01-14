@@ -13,10 +13,10 @@ function App() {
 
       <div className='container'>
         <Navigator />
-        <Routes>
-          <Route path="/getStudent" element={<StudentTransactions />} />
-          <Route path="/addGrade" element={<AddGrade />} />
-        </Routes>
+          <Routes>
+            <Route path="/getStudent" element={<StudentTransactions />} />
+            <Route path="/addGrade" element={<AddGrade />} />
+          </Routes>
       </div>
 
     </Router>
