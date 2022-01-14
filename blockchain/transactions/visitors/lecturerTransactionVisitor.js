@@ -2,7 +2,7 @@ const ChainUtil = require('../../../chain-util');
 
 class LecturerTransactionVisitor{
     constructor(keyDecryptString){
-        this.keyDecryptString = keyDecryptString;
+        this.keyDecrypt = ChainUtil.createPublicKey(keyDecryptString);
     }
 
 
@@ -12,7 +12,7 @@ class LecturerTransactionVisitor{
 
         let res = {}
         res.date = t.date;
-        res.studentID = ChainUtil.decryptPublic(ChainUtil.createPublicKey(this.keyDecryptString), t.masterSignature);
+        res.studentID = ChainUtil.decryptPublic(this.keyDecrypt, t.masterSignature);
         res.course = t.course;
         res.grade = t.grade;
         res.weight = t.weight;
@@ -22,7 +22,7 @@ class LecturerTransactionVisitor{
     visitPresenceTransaction(t){
         let res = {}
         res.date = t.date;
-        res.studentID = ChainUtil.decryptPublic(ChainUtil.createPublicKey(this.keyDecryptString), t.masterSignature);
+        res.studentID = ChainUtil.decryptPublic(this.keyDecrypt, t.masterSignature);
         res.presence = t.presence;
         res.course = t.course;
         res.dateClass = t.dateClass;
@@ -32,7 +32,7 @@ class LecturerTransactionVisitor{
     visitFinalGradeTransaction(t){
         let res = {}
         res.date = t.date;
-        res.studentID = ChainUtil.decryptPublic(ChainUtil.createPublicKey(this.keyDecryptString), t.masterSignature);
+        res.studentID = ChainUtil.decryptPublic(this.keyDecrypt, t.masterSignature);
         res.course = t.course;
         res.grade = t.grade;
         return res;
@@ -41,7 +41,7 @@ class LecturerTransactionVisitor{
     visitCertificateTransaction(t){
         let res = {}
         res.date = t.date;
-        res.studentID = ChainUtil.decryptPublic(ChainUtil.createPublicKey(this.keyDecryptString), t.masterSignature);
+        res.studentID = ChainUtil.decryptPublic(this.keyDecrypt, t.masterSignature);
         res.certfier = t.certfier;
         res.dateOfAward = t.dateOfAward;
         res.info = t.info;
