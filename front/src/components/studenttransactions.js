@@ -63,19 +63,19 @@ export default class StudentTransactions extends Component {
     render() {
         return (
             <div className="container">
-                <div className="text-dark">
-                    <label className="text-dark">Id studenta:</label>
+                <div>
+                    <label>Id studenta:</label>
                     <input type="text" name="studentId" value={this.state.studentId} onChange={ev => this.setState({studentId: ev.target.value})}/>
                     <br/>
-                    <label className="text-dark">Klucz studenta:</label>
+                    <label>Klucz studenta:</label>
                     <input type="text" name="keyDecryptString" value={this.state.keyDecryptString} onChange={ev => this.setState({keyDecryptString: ev.target.value})}/>
                     <br/>
-                    <label className="text-dark">Typ transakcji:</label>
+                    <label>Typ transakcji:</label>
                     <input type="text" name="type" value={this.state.type} onChange={ev => this.setState({type: ev.target.value})}/>
                     <br/>
-                    <button className="text-dark" value={this.state.loaded} onClick={this.getTransactions}>Wyślij</button>
+                    <button value={this.state.loaded} onClick={this.getTransactions}>Wyślij</button>
                 </div>
-                <div className="text-dark">
+                <div>
                     {this.transactions()}
                 </div>
             </div>

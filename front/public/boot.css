@@ -34,7 +34,6 @@ body {
     color: #fff;
 }
 
-/* Extra markup and styles for table-esque vertical and horizontal centering */
 .site-wrapper {
   display: table;
   width: 100%;
@@ -51,7 +50,6 @@ body {
   margin-right: auto;
   margin-left: auto;
 }
-
 
 .inner {
   padding: 30px;
@@ -118,4 +116,8 @@ body {
     vertical-align: middle;
   }
 
+}
+
+.container {
+  color: #fff;
 }

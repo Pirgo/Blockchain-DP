@@ -35,29 +35,29 @@ export default class AddGrade extends Component {
     render() {
         return (
             <div className="container">
-                <div className="text-dark">
-                    <label className="text-dark">Id studenta:</label>
+                <div>
+                    <label>Id studenta:</label>
                     <input type="text" name="studentID" value={this.state.studentID} onChange={ev => this.setState({studentID: ev.target.value})}/>
                     <br/>
-                    <label className="text-dark">Klucz szyfrujący:</label>
+                    <label>Klucz szyfrujący:</label>
                     <input type="text" name="masterKeyString" value={this.state.masterKeyString} onChange={ev => this.setState({masterKeyString: ev.target.value})}/>
                     <br/>
-                    <label className="text-dark">Id wykładowcy:</label>
+                    <label>Id wykładowcy:</label>
                     <input type="text" name="lecturerID" value={this.state.lecturerID} onChange={ev => this.setState({lecturerID: ev.target.value})}/>
                     <br/>
-                    <label className="text-dark">Klucz weryfikacyjny:</label>
+                    <label>Klucz weryfikacyjny:</label>
                     <input type="text" name="verificationKeyString" value={this.state.verificationKeyString} onChange={ev => this.setState({verificationKeyString: ev.target.value})}/>
                     <br/>
-                    <label className="text-dark">Przedmiot:</label>
+                    <label>Przedmiot:</label>
                     <input type="text" name="course" value={this.state.course} onChange={ev => this.setState({course: ev.target.value})}/>
                     <br/>
-                    <label className="text-dark">Ocena:</label>
+                    <label>Ocena:</label>
                     <input type="text" name="grade" value={this.state.grade} onChange={ev => this.setState({grade: ev.target.value})}/>
                     <br/>
-                    <label className="text-dark">Waga:</label>
+                    <label>Waga:</label>
                     <input type="text" name="weight" value={this.state.weight} onChange={ev => this.setState({weight: ev.target.value})}/>
                     <br/>
-                    <button className="text-dark" value={this.state.loaded} onClick={this.sendGrade}>Wyślij</button>
+                    <button value={this.state.loaded} onClick={this.sendGrade}>Wyślij</button>
                 
                 </div>
             </div>
