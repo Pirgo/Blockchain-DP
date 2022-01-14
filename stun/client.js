@@ -1,13 +1,13 @@
 var REMOTEPORT = 5001
-var PORT = 5002;
+var PORT = 5003;
 var HOST = '192.168.100.52';
-var REMOTEHOST  = '172.104.240.26'
+var REMOTEHOST  = '192.168.100.52'//'172.104.240.26'
 
 var dgram = require('dgram');
 var message = {type:"register"};
 var messageString = JSON.stringify(message)
 var client = dgram.createSocket('udp4');
-client.bind(PORT,HOST)
+client.bind(HOST)
 //var server = dgram.createSocket('udp4');
 
 client.on('listening', function () {
