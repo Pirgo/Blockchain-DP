@@ -128,7 +128,7 @@ app.get('/transaction-types', (req,res)=>{
     res.json(types);
 })
 
-//TODO: sprawdzenie czy typ sie zgadza z mozliwymi
+
 app.post('/find-transactions-student', (req, res)=>{
     const {id, keyDecryptString, type} = req.body;
     const iterator = new BlockchainIterator(blockchain, type);
@@ -157,7 +157,15 @@ app.post('/find-transactions-lecturer', (req, res)=>{
         return;
     }
     
-    let resArr = transactions.map(t => t.visit(visitor));
+    let resArr = transactions.reduce((filtered, t)=>{
+        try{
+            filtered.push(t.visit(visitor));
+        }catch(e){
+            console.log('Error while decryptnig ' + e)
+        }finally{
+            return filtered;
+        }
+    }, [])
     res.json(resArr);
 })
 
