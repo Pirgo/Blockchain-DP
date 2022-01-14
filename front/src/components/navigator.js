@@ -12,7 +12,7 @@ export default class Navigator extends Component {
 
     render() {
         return (
-            <nav className="navbar navbar-dark bg-dark navbar-expand-lg">
+            <nav className="navbar navbar-dark bg-dark navbar-expand-sm">
                 <div className="collpase navbar-collapse">
                     <Link to="/" className="navbar-brand">Dziekanat</Link>
                     <ul className="navbar-nav">

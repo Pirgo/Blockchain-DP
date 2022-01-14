@@ -245,7 +245,10 @@ app.post('/transact-certificate', (req, res) => {
 })
 
 app.post('/transact-partialGrade', (req, res) => {
-    const {date, studentID, masterKeyString, lecturerID, verificationKeyString, course, grade, weight} = req.body;
+    let {date, studentID, masterKeyString, lecturerID, verificationKeyString, course, grade, weight} = req.body;
+    masterKeyString = masterKeyString.split('\\n').join('\n');
+    verificationKeyString = verificationKeyString.split('\\n').join('\n');
+
     const masterSignatureKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, masterKeyString);
     const verificationKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, verificationKeyString);
     const signatureKey = ChainUtil.createPublicKey(ChainUtil.getSignatureKey(blockchain.getGenesis(),studentID))

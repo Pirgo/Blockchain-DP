@@ -47,7 +47,7 @@ export default class StudentTransactions extends Component {
     }
     
     getTransactions = () => {
-        if(this.state.keyDecryptString != "" && this.state.type != "" && this.state.studentId != "") {
+        if(this.state.keyDecryptString !== "" && this.state.type !== "" && this.state.studentId !== "") {
 
             const body = {"id": parseInt(this.state.studentId), "keyDecryptString": this.state.keyDecryptString, "type": this.state.type}
             axios.post('http://localhost:3001/find-transactions-student', body)
@@ -65,13 +65,13 @@ export default class StudentTransactions extends Component {
             <div className="container">
                 <div className="text-dark">
                     <label className="text-dark">Id studenta:</label>
-                    <input type="text" value="" name="studentId" value={this.state.studentId} onChange={ev => this.setState({studentId: ev.target.value})}/>
+                    <input type="text" name="studentId" value={this.state.studentId} onChange={ev => this.setState({studentId: ev.target.value})}/>
                     <br/>
                     <label className="text-dark">Klucz studenta:</label>
-                    <input type="text" value="" name="keyDecryptString" value={this.state.keyDecryptString} onChange={ev => this.setState({keyDecryptString: ev.target.value})}/>
+                    <input type="text" name="keyDecryptString" value={this.state.keyDecryptString} onChange={ev => this.setState({keyDecryptString: ev.target.value})}/>
                     <br/>
                     <label className="text-dark">Typ transakcji:</label>
-                    <input type="text" value="" name="type" value={this.state.type} onChange={ev => this.setState({type: ev.target.value})}/>
+                    <input type="text" name="type" value={this.state.type} onChange={ev => this.setState({type: ev.target.value})}/>
                     <br/>
                     <button className="text-dark" value={this.state.loaded} onClick={this.getTransactions}>Wyślij</button>
                 </div>
