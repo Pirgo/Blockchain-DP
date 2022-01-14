@@ -26,10 +26,10 @@ export default class AddGrade extends Component {
                 .then(response => {
                     this.setState({ transactions: response.data })
                     console.log(this.state.transactions)
+                    axios.get('http://localhost:3001/mine-transactions')
                 }).catch((error) => {
                     console.log(error);
                 })
-        axios.get('http://localhost:3001/mine-transactions')
     }
 
     render() {

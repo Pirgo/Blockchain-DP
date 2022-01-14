@@ -1,5 +1,5 @@
 const PORT = 5001;
-const HOST = '192.168.100.52'; //TODO
+const HOST = '172.104.240.26'; //TODO
 const TIME = 120000 //2 minuty
 var dgram = require('dgram');
 const { parse } = require('querystring');
@@ -11,8 +11,9 @@ var stunTable = new Map()
 
 function timeoutHandler(key) {
     return setTimeout(() => {
-        stunTable.delete(key)
+        stunTable.delete(key)   //wyrejestrowanie peera z tablicy
         notify()
+
     }, TIME)
 }
 function send(msg, addr, port) {
@@ -49,16 +50,18 @@ server.on('message', function (message, remote) {
         console.error("message parsing error")
         return
     }
+    let pair = remote.address+":"+remote.port
     switch (parsedMsg.type) {
         case "register":    //rejestracja adresu i portu
             console.log("registering new peer")
-            stunTable.set(remote.address+":"+remote.port,  timeoutHandler(remote.address))
+            stunTable.set(pair,  timeoutHandler(remote.address))
             notify()
             break;
         case "alive":   //odpowiedź na "ping" - peer uczestniczy w sieci
-            let peer = stunTable.get(remote.address)
+
+            let peer = stunTable.get(pair)
             clearTimeout(peer)
-            peer.timeout = timeoutHandler(peer.address) //odnowienie dzierżawy w tablicy peerów
+            peer = timeoutHandler(pair) //odnowienie dzierżawy w tablicy peerów
         case "ask":     //pytanie o adresy:porty innych peerów
             console.warn("type:'ask' deprecated")
             notify          
