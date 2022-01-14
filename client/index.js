@@ -171,8 +171,18 @@ app.post('/find-transactions-lecturer', (req, res)=>{
 
 app.post('/transact-presence', (req, res) => {
     const {date, studentID, masterKeyString, lecturerID, verificationKeyString, presence, course, dateClass} = req.body;
-    const masterSignatureKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, masterKeyString);
-    const verificationKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, verificationKeyString);
+    try{
+        var masterSignatureKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, masterKeyString);
+    }catch(e){
+        res.status(400).json('Wrong masterKeyString ' + e);
+        return;
+    }
+    try{
+        var verificationKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, verificationKeyString);
+    }catch(e){
+        res.status(400).json('Wrong verifivationKeyString ' + e);
+        return;
+    }
     const signatureKey = ChainUtil.createPublicKey(ChainUtil.getSignatureKey(blockchain.getGenesis(),studentID))
 
     const signature = ChainUtil.encryptPublic(signatureKey, studentID.toString());
@@ -199,8 +209,18 @@ app.post('/transact-presence', (req, res) => {
 
 app.post('/transact-certificate', (req, res) => {
     const {date, studentID, masterKeyString, lecturerID, verificationKeyString, certfier, dateOfAward, info, nameOfCertificate} = req.body;
-    const masterSignatureKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, masterKeyString);
-    const verificationKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, verificationKeyString);
+    try{
+        var masterSignatureKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, masterKeyString);
+    }catch(e){
+        res.status(400).json('Wrong masterKeyString ' + e);
+        return;
+    }
+    try{
+        var verificationKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, verificationKeyString);
+    }catch(e){
+        res.status(400).json('Wrong verifivationKeyString ' + e);
+        return;
+    }
     const signatureKey = ChainUtil.createPublicKey(ChainUtil.getSignatureKey(blockchain.getGenesis(),studentID))
 
     const signature = ChainUtil.encryptPublic(signatureKey, studentID.toString());
@@ -229,8 +249,18 @@ app.post('/transact-certificate', (req, res) => {
 
 app.post('/transact-partialGrade', (req, res) => {
     const {date, studentID, masterKeyString, lecturerID, verificationKeyString, course, grade, weight} = req.body;
-    const masterSignatureKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, masterKeyString);
-    const verificationKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, verificationKeyString);
+    try{
+        var masterSignatureKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, masterKeyString);
+    }catch(e){
+        res.status(400).json('Wrong masterKeyString ' + e);
+        return;
+    }
+    try{
+        var verificationKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, verificationKeyString);
+    }catch(e){
+        res.status(400).json('Wrong verifivationKeyString ' + e);
+        return;
+    }
     const signatureKey = ChainUtil.createPublicKey(ChainUtil.getSignatureKey(blockchain.getGenesis(),studentID))
 
     const signature = ChainUtil.encryptPublic(signatureKey, studentID.toString());
@@ -257,8 +287,18 @@ app.post('/transact-partialGrade', (req, res) => {
 
 app.post('/transact-finalGrade', (req, res) => {
     const {date, studentID, masterKeyString, lecturerID, verificationKeyString, course, grade} = req.body;
-    const masterSignatureKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, masterKeyString);
-    const verificationKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, verificationKeyString);
+    try{
+        var masterSignatureKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, masterKeyString);
+    }catch(e){
+        res.status(400).json('Wrong masterKeyString ' + e);
+        return;
+    }
+    try{
+        var verificationKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, verificationKeyString);
+    }catch(e){
+        res.status(400).json('Wrong verifivationKeyString ' + e);
+        return;
+    }
     const signatureKey = ChainUtil.createPublicKey(ChainUtil.getSignatureKey(blockchain.getGenesis(),studentID))
 
     const signature = ChainUtil.encryptPublic(signatureKey, studentID.toString());
