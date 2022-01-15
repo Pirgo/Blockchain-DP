@@ -1,32 +1,32 @@
-const express = require('express');
-const Blockchain = require('../blockchain/blockchain');
-const bodyParser = require('body-parser');
-const P2pServer = require('./p2p-server.js');
-const TransactionPool = require('../blockchain/transactionPool');
-const Transaction = require('../blockchain/transactions/transaction');
-const Miner = require('./miner');
+const express = require("express");
+const Blockchain = require("../blockchain/blockchain");
+const bodyParser = require("body-parser");
+const P2pServer = require("./p2p-server.js");
+const TransactionPool = require("../blockchain/transactionPool");
+const Transaction = require("../blockchain/transactions/transaction");
+const Miner = require("./miner");
 
-const ChainUtil = require('../chain-util');
+const ChainUtil = require("../chain-util");
 
-const {TypeEnum} = require('../blockchain/transactions/transactionEnums')
+const { TypeEnum } = require("../blockchain/transactions/transactionEnums");
 
-const PresenceTransactionBuilder = require('../blockchain/transactions/builders/presenceTransactionBuilder');
-const CertificateTransactionBuilder = require('../blockchain/transactions/builders/certificateTransactionBuilder');
-const PartialGradeTransactionBuilder = require('../blockchain/transactions/builders/partialGradeTransactionBuilder');
-const FinalGradeTransactionBuilder = require('../blockchain/transactions/builders/finalGradeTransactionBuilder');
+const PresenceTransactionBuilder = require("../blockchain/transactions/builders/presenceTransactionBuilder");
+const CertificateTransactionBuilder = require("../blockchain/transactions/builders/certificateTransactionBuilder");
+const PartialGradeTransactionBuilder = require("../blockchain/transactions/builders/partialGradeTransactionBuilder");
+const FinalGradeTransactionBuilder = require("../blockchain/transactions/builders/finalGradeTransactionBuilder");
 
-const BlockchainIterator = require('../blockchain/iterators/BlockchainIterator');
+const BlockchainIterator = require("../blockchain/iterators/BlockchainIterator");
 
-const StudentTransactionFinder = require('../blockchain/finders/studentTransactionFinder');
-const StudentTransactionVisitor = require('../blockchain/transactions/visitors/studentTransactionVisitor');
-const LecturerTransactionFinder = require('../blockchain/finders/lecturerTransactionFinder');
-const LecturerTransactionVisitor = require('../blockchain/transactions/visitors/lecturerTransactionVisitor');
+const StudentTransactionFinder = require("../blockchain/finders/studentTransactionFinder");
+const StudentTransactionVisitor = require("../blockchain/transactions/visitors/studentTransactionVisitor");
+const LecturerTransactionFinder = require("../blockchain/finders/lecturerTransactionFinder");
+const LecturerTransactionVisitor = require("../blockchain/transactions/visitors/lecturerTransactionVisitor");
 
 //get the port from the user or set the default port
 const HTTP_PORT = process.env.HTTP_PORT || 3001;
 
 //create a new app
-const app  = express();
+const app = express();
 
 //using the blody parser middleware
 app.use(bodyParser.json());
@@ -42,16 +42,14 @@ const miner = new Miner(blockchain, transactionPool, p2pserver);
 //EXPOSED APIs
 
 //api to get the blocks
-app.get('/blocks',(req,res)=>{
-
+app.get("/blocks", (req, res) => {
     res.json(blockchain.chain);
-
 });
 
 // api to view transaction in the transaction pool
-app.get('/transactions',(req,res)=>{
+app.get("/transactions", (req, res) => {
     res.json(transactionPool.transactions);
-    });
+});
 
 //api to view all certificates in chain
 // app.get('/transactions-certificate', (req, res) => {
@@ -91,11 +89,11 @@ app.get('/transactions',(req,res)=>{
 //     res.json(tmp);
 // })
 
-app.get('/mine-transactions', (req, res)=>{
+app.get("/mine-transactions", (req, res) => {
     const block = miner.mine();
-    console.log(`New block added ${block.toString}`);
-    res.redirect('/blocks');
-})
+    console.log(`New block added ${block.toString()}`);
+    res.redirect("/blocks");
+});
 
 //api to add blocks
 // app.post('/mine',(req,res)=>{
@@ -106,223 +104,172 @@ app.get('/mine-transactions', (req, res)=>{
 // });
 
 //returns all lecturers id in genesis
-app.get('/lecturers', (req, res)=>{
-    const lecturersID = blockchain.chain[0].data.lecturers.map(l => {
+app.get("/lecturers", (req, res) => {
+    const lecturersID = blockchain.chain[0].data.lecturers.map((l) => {
         return l.ID;
-    })
+    });
     res.json(lecturersID);
-})
+});
 
-app.get('/students', (req,res) => {
-    const studentsID = blockchain.chain[0].data.students.map(s =>{
+app.get("/students", (req, res) => {
+    const studentsID = blockchain.chain[0].data.students.map((s) => {
         return s.ID;
-    })
+    });
     res.json(studentsID);
-})
+});
 
-app.get('/transaction-types', (req,res)=>{
+app.get("/transaction-types", (req, res) => {
     let types = [];
-    for(const property in TypeEnum){
-        types.push(TypeEnum[property])
+    for (const property in TypeEnum) {
+        types.push(TypeEnum[property]);
     }
     res.json(types);
-})
+});
 
-
-app.post('/find-transactions-student', (req, res)=>{
-    const {id, keyDecryptString, type} = req.body;
+app.post("/find-transactions-student", (req, res) => {
+    const { id, keyDecryptString, type } = req.body;
+    const filter = (req.body.filter ? req.body.filter : {});
     const iterator = new BlockchainIterator(blockchain, type);
-    try{
-        var finder = new StudentTransactionFinder(id, keyDecryptString, iterator);
-    }catch(e){//lapiemy niepoprawny klucz
-        res.status(400).json('Wrong keystring ' + e);
-        return
+    try {
+        var finder = new StudentTransactionFinder(id, keyDecryptString, iterator, filter);
+    } catch (e) {
+        //lapiemy niepoprawny klucz
+        res.status(400).json("Wrong keystring " + e);
+        return;
     }
-    
-    const transactions = finder.getTransactions();
-    const visitor = new StudentTransactionVisitor()
-    let resArr = transactions.map(t => t.visit(visitor));
-    res.json(resArr);
-})
 
-app.post('/find-transactions-lecturer', (req, res)=>{
-    const {id, keyDecryptString, type} = req.body;
-    const iterator = new BlockchainIterator(blockchain, type);
-    const finder = new LecturerTransactionFinder(id, iterator);
     const transactions = finder.getTransactions();
+    const visitor = new StudentTransactionVisitor();
+    let resArr = transactions.map((t) => t.visit(visitor));
+    res.json(resArr);
+});
+
+//przez filtry deszyfrujemy masterSignature dwa razy, narazie nie wiem jak to poprawic sensownie
+app.post("/find-transactions-lecturer", (req, res) => {
+    const { id, keyDecryptString, type } = req.body;
+    const filter = (req.body.filter ? req.body.filter : {});
+    const iterator = new BlockchainIterator(blockchain, type);
+    const finder = new LecturerTransactionFinder(id, keyDecryptString, iterator, filter);
     try{
-        var visitor = new LecturerTransactionVisitor(keyDecryptString);
-    }catch(e){//lapiemy errora gdy podano niepoprawny klucz
+        var transactions = finder.getTransactions();
+    }catch(e){
         res.status(400).json("Wrong keystring " + e);
         return;
     }
     
-    let resArr = transactions.reduce((filtered, t)=>{
-        try{
+    try {
+        var visitor = new LecturerTransactionVisitor(keyDecryptString);
+    } catch (e) {
+        //lapiemy errora gdy podano niepoprawny klucz
+        res.status(400).json("Wrong keystring " + e);
+        return;
+    }
+
+    let resArr = transactions.reduce((filtered, t) => {
+        try {
             filtered.push(t.visit(visitor));
-        }catch(e){
-            console.log('Error while decryptnig ' + e)
-        }finally{
+        } catch (e) {
+            console.log("Error while decryptnig " + e);
+        } finally {
             return filtered;
         }
-    }, [])
+    }, []);
     res.json(resArr);
-})
+});
 
-app.post('/transact-presence', (req, res) => {
-    const {date, studentID, masterKeyString, lecturerID, verificationKeyString, presence, course, dateClass} = req.body;
-    try{
-        var masterSignatureKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, masterKeyString);
-    }catch(e){
-        res.status(400).json('Wrong masterKeyString ' + e);
+//dodaje transakcje do poola
+app.post("/transact", (req, res) => {
+    const {
+        date,
+        studentID,
+        masterKeyString,
+        lecturerID,
+        verificationKeyString,
+        type,
+    } = req.body;
+    try {
+        var masterSignatureKey = ChainUtil.createPrivateKey(
+            "Lecturer",
+            lecturerID,
+            masterKeyString
+        );
+    } catch (e) {
+        res.status(400).json("Wrong masterKeyString " + e);
         return;
     }
-    try{
-        var verificationKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, verificationKeyString);
-    }catch(e){
-        res.status(400).json('Wrong verifivationKeyString ' + e);
+    try {
+        var verificationKey = ChainUtil.createPrivateKey(
+            "Lecturer",
+            lecturerID,
+            verificationKeyString
+        );
+    } catch (e) {
+        res.status(400).json("Wrong verifivationKeyString " + e);
         return;
     }
-    const signatureKey = ChainUtil.createPublicKey(ChainUtil.getSignatureKey(blockchain.getGenesis(),studentID))
-
+    const signatureKey = ChainUtil.createPublicKey(
+        ChainUtil.getSignatureKey(blockchain.getGenesis(), studentID)
+    );
     const signature = ChainUtil.encryptPublic(signatureKey, studentID.toString());
-    const masterSignature = ChainUtil.encryptPrivate(masterSignatureKey, studentID.toString());
-    const verification = ChainUtil.encryptPrivate(verificationKey, ChainUtil.getVerificationString());
-
-    const builder = new PresenceTransactionBuilder();
-
+    const masterSignature = ChainUtil.encryptPrivate(
+        masterSignatureKey,
+        studentID.toString()
+    );
+    const verification = ChainUtil.encryptPrivate(
+        verificationKey,
+        ChainUtil.getVerificationString()
+    );
+    let builder;
+    switch (type) {
+        case TypeEnum.certificate: {
+            const { certifier, dateOfAward, info, nameOfCertificate } = req.body;
+            builder = new CertificateTransactionBuilder();
+            builder.setCertifier(certifier);
+            builder.setDateOfAward(dateOfAward);
+            builder.setInfo(info);
+            builder.setNameOfCertificate(nameOfCertificate);
+            break;
+        }
+        case TypeEnum.presence: {
+            const { presence, course, dateClass } = req.body;
+            builder = new PresenceTransactionBuilder();
+            builder.setPresence(presence);
+            builder.setCourse(course);
+            builder.setDateClass(dateClass);
+            break;
+        }
+        case TypeEnum.partialGrade: {
+            const { course, grade, weight } = req.body;
+            builder = new PartialGradeTransactionBuilder();
+            builder.setCourse(course);
+            builder.setGrade(grade);
+            builder.setWeight(weight);
+            break;
+        }
+        case TypeEnum.finalGrade: {
+            const { course, grade } = req.body;
+            builder = new FinalGradeTransactionBuilder();
+            builder.setCourse(course);
+            builder.setGrade(grade);
+            break;
+        }
+        default:
+            res.status(400).json("Wrong transaction type");
+            return;
+    }
     builder.setID(ChainUtil.id());
     builder.setDate(date);
     builder.setSignature(signature);
     builder.setMasterSignature(masterSignature);
     builder.setLecturerID(lecturerID);
-    builder.setVerification(verification)
-    builder.setPresence(presence);
-    builder.setCourse(course);
-    builder.setDateClass(dateClass);
-
-    const presenceTransaction = builder.getResult();
-    p2pserver.broadcastTransaction(presenceTransaction);
-    res.redirect('/transactions');
-
-})
-
-app.post('/transact-certificate', (req, res) => {
-    const {date, studentID, masterKeyString, lecturerID, verificationKeyString, certfier, dateOfAward, info, nameOfCertificate} = req.body;
-    try{
-        var masterSignatureKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, masterKeyString);
-    }catch(e){
-        res.status(400).json('Wrong masterKeyString ' + e);
-        return;
-    }
-    try{
-        var verificationKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, verificationKeyString);
-    }catch(e){
-        res.status(400).json('Wrong verifivationKeyString ' + e);
-        return;
-    }
-    const signatureKey = ChainUtil.createPublicKey(ChainUtil.getSignatureKey(blockchain.getGenesis(),studentID))
-
-    const signature = ChainUtil.encryptPublic(signatureKey, studentID.toString());
-    const masterSignature = ChainUtil.encryptPrivate(masterSignatureKey, studentID.toString());
-    const verification = ChainUtil.encryptPrivate(verificationKey, ChainUtil.getVerificationString());
-
-
-    const builder = new CertificateTransactionBuilder();
-
-    builder.setID(ChainUtil.id());
-    builder.setDate(date);
-    builder.setSignature(signature);
-    builder.setMasterSignature(masterSignature);
-    builder.setLecturerID(lecturerID);
-    builder.setVerification(verification)
-    builder.setCertifier(certfier);
-    builder.setDateOfAward(dateOfAward);
-    builder.setInfo(info);
-    builder.setNameOfCertificate(nameOfCertificate);
-
-    const certificateTransaction = builder.getResult();
-    p2pserver.broadcastTransaction(certificateTransaction);
-    res.redirect('/transactions');
-
-})
-
-app.post('/transact-partialGrade', (req, res) => {
-    const {date, studentID, masterKeyString, lecturerID, verificationKeyString, course, grade, weight} = req.body;
-    try{
-        var masterSignatureKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, masterKeyString);
-    }catch(e){
-        res.status(400).json('Wrong masterKeyString ' + e);
-        return;
-    }
-    try{
-        var verificationKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, verificationKeyString);
-    }catch(e){
-        res.status(400).json('Wrong verifivationKeyString ' + e);
-        return;
-    }
-    const signatureKey = ChainUtil.createPublicKey(ChainUtil.getSignatureKey(blockchain.getGenesis(),studentID))
-
-    const signature = ChainUtil.encryptPublic(signatureKey, studentID.toString());
-    const masterSignature = ChainUtil.encryptPrivate(masterSignatureKey, studentID.toString());
-    const verification = ChainUtil.encryptPrivate(verificationKey, ChainUtil.getVerificationString());
-
-    const builder = new PartialGradeTransactionBuilder();
-
-    builder.setID(ChainUtil.id());
-    builder.setDate(date);
-    builder.setSignature(signature);
-    builder.setMasterSignature(masterSignature);
-    builder.setLecturerID(lecturerID);
-    builder.setVerification(verification)
-    builder.setCourse(course);
-    builder.setGrade(grade);
-    builder.setWeight(weight);
-
-    const partialGradeTransaction = builder.getResult();
-    p2pserver.broadcastTransaction(partialGradeTransaction);
-    res.redirect('/transactions');
-
-})
-
-app.post('/transact-finalGrade', (req, res) => {
-    const {date, studentID, masterKeyString, lecturerID, verificationKeyString, course, grade} = req.body;
-    try{
-        var masterSignatureKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, masterKeyString);
-    }catch(e){
-        res.status(400).json('Wrong masterKeyString ' + e);
-        return;
-    }
-    try{
-        var verificationKey = ChainUtil.createPrivateKey('Lecturer', lecturerID, verificationKeyString);
-    }catch(e){
-        res.status(400).json('Wrong verifivationKeyString ' + e);
-        return;
-    }
-    const signatureKey = ChainUtil.createPublicKey(ChainUtil.getSignatureKey(blockchain.getGenesis(),studentID))
-
-    const signature = ChainUtil.encryptPublic(signatureKey, studentID.toString());
-    const masterSignature = ChainUtil.encryptPrivate(masterSignatureKey, studentID.toString());
-    const verification = ChainUtil.encryptPrivate(verificationKey, ChainUtil.getVerificationString());
-
-    const builder = new FinalGradeTransactionBuilder();
-
-    builder.setID(ChainUtil.id());
-    builder.setDate(date);
-    builder.setSignature(signature);
-    builder.setMasterSignature(masterSignature);
-    builder.setLecturerID(lecturerID);
-    builder.setVerification(verification)
-    builder.setCourse(course);
-    builder.setGrade(grade);
-
-    const finalGradeTransaction = builder.getResult();
-    p2pserver.broadcastTransaction(finalGradeTransaction);
-    res.redirect('/transactions');
-
-})
+    builder.setVerification(verification);
+    const transaction = builder.getResult();
+    transactionPool.add(transaction);
+    p2pserver.broadcastTransaction(transaction);
+    res.redirect("/transactions");
+});
 
 // app server configurations
-app.listen(HTTP_PORT,()=>{
+app.listen(HTTP_PORT, () => {
     console.log(`listening on port ${HTTP_PORT}`);
-})
+});

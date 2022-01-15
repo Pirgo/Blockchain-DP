@@ -2,7 +2,7 @@ const Transaction = require("./transaction");
 const {TypeEnum} = require('./transactionEnums');
 
 class CertificateTransaction extends Transaction{
-    certfier;
+    certifier;
     dateOfAward;
     info;
     nameOfCertificate;

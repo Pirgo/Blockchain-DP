@@ -102,7 +102,10 @@ class P2pserver {
                     this.blockchain.replaceChain(data.chain);
                     break;
                 case MESSAGE_TYPE.transaction:
-                    this.transactionPool.add(data.transaction);
+                    const builder = new TransactionBuilder();
+                    builder.buildFromJSON(data);
+                    const transaction = builder.getResult();
+                    this.transactionPool.add(transaction);
                     break;
                 case MESSAGE_TYPE.clear_transactions:
                     this.transactionPool.clear();

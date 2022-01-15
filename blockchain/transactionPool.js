@@ -6,12 +6,10 @@ class TransactionPool {
     this.genesis = genesis;
   }
 
-  add(data) {
-    const builder = new TransactionBuilder();
-    builder.buildFromJSON(data);
-    const transaction = builder.getResult();
+  add(transaction) {
+    
     if (transaction.checkVerification(this.genesis)) {
-      this.transactions.push(data);
+      this.transactions.push(transaction);
       return true;
     }
     return false;

@@ -2,7 +2,7 @@ const fs = require('fs');
 const crypto = require("crypto");
 
 function makeKeys(keyLength, passphrase){
-    const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', { //Generating pair of keys
+    let { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', { //Generating pair of keys
         modulusLength: keyLength,
         publicKeyEncoding: {
             type: 'spki',
@@ -14,6 +14,15 @@ function makeKeys(keyLength, passphrase){
             cipher: 'aes-256-cbc',
             passphrase: passphrase
         }});
+    
+    publicKey = publicKey.replace(/\n/g, "");
+    publicKey = publicKey.replace("-----BEGIN PUBLIC KEY-----", "");
+    publicKey = publicKey.replace("-----END PUBLIC KEY-----", "");
+    
+    privateKey = privateKey.replace(/\n/g, "");
+    privateKey = privateKey.replace("-----BEGIN ENCRYPTED PRIVATE KEY-----", "")
+    privateKey = privateKey.replace("-----END ENCRYPTED PRIVATE KEY-----", "");
+
     return { publicKey, privateKey }
 }
 
@@ -39,8 +48,11 @@ function readWholeData(filename){ //Reading every record from .json file
 }
 
 function addWholeData(records,filename){ //Sending every record to .json file
+    console.log(filename)
     let data = JSON.stringify(records);
-    fs.writeFileSync(filename,data);
+    fs.writeFileSync("./datagenerator/" + filename,data, (err)=>{
+        if(err) console.log(err)
+    });
 }
 
 function generateData(lecturersAmount,studentAmount){ //Generating some records. For example to tests
@@ -56,7 +68,6 @@ function generateData(lecturersAmount,studentAmount){ //Generating some records.
             secondPrivateKey : res[2].privateKey
         });
     }
-
     for(let i = 1; i <= studentAmount; i++){
         let res = createRecord("Student",i+3000,4096);
         records.push(res[0]);
