@@ -96,23 +96,19 @@ class ChainUtil {
   }
 
   static getVerificationKey(genesis, id) {
-    const lecturers = genesis.data.lecturers;
-    for (let i = 0; i < lecturers.length; i++) {
-      if (lecturers[i].ID == id) {
-        return lecturers[i].key;
-      }
+    const data = genesis.data.find(e => e.ID == id);
+    if(data === undefined){
+      return null;
     }
-    return null;
+    return data.key;
   }
 
   static getSignatureKey(genesis, id) {
-    const students = genesis.data.students;
-    for (let i = 0; i < students.length; i++) {
-      if (students[i].ID == id) {
-        return students[i].key;
-      }
+    const data = genesis.data.find(e => e.ID == id);
+    if(data === undefined){
+      return null;
     }
-    return null;
+    return data.key;
   }
 
   static id() {

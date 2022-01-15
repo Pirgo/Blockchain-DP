@@ -126,6 +126,16 @@ app.get("/transaction-types", (req, res) => {
     res.json(types);
 });
 
+//zwraca kursy danej osoby
+app.get("/courses/:id", (req, res) => {
+    const data = blockchain.getGenesis().data.find(e => e.ID == req.params.id);
+    if(data === undefined){
+        res.status(400).json("Wrong person id ");
+        return;
+    }
+    res.json(data.courses);
+})
+
 app.post("/find-transactions-student", (req, res) => {
     const { id, keyDecryptString, type } = req.body;
     const filter = (req.body.filter ? req.body.filter : {});

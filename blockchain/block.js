@@ -15,15 +15,8 @@ class Block{
     //TODO: narazie jest wpisany gdzie powinien byc plik i jak ma sie nazywac, pewnie do zmiany
     static genesis(){
         const records = JSON.parse(fs.readFileSync('datagenerator/records.json'));
-        let data = {lecturers : [], students: []};
-        records.forEach(r =>{
-            if(r.role === "Lecturer"){
-                data.lecturers.push(r);
-            }
-            else if(r.role === "Student"){
-                data.students.push(r);
-            }
-        })
+        let data = [];
+        records.forEach(r => data.push(r))
         return new this('Genesis', '----', 'GENESIS-HASH', 0, data)
     }
 

@@ -1,6 +1,8 @@
 const fs = require('fs');
 const crypto = require("crypto");
 
+let courses = ["Algebra", "Physics", "Unix", "English", "Algorithms"]
+
 function makeKeys(keyLength, passphrase){
     let { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', { //Generating pair of keys
         modulusLength: keyLength,
@@ -36,9 +38,10 @@ function createRecord(role,ID,keyLength){ //Creating record of our student or te
     var record = { //Record of teacher/student
         role : role,
         ID : ID,
-        key : firstPair.publicKey
+        key : firstPair.publicKey,
+        courses: [courses[0], courses[1]]
     }
-
+    courses = courses.sort((a,b) => 0.5 - Math.random());
     return [record,firstPair.privateKey,secondPair]
 }
 
