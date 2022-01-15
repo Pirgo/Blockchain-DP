@@ -6,15 +6,13 @@ const { parse } = require('querystring');
 
 const server = dgram.createSocket('udp4');
 
-var stunTable = new Map()
+const stunTable = new Map()
 //stunTable.set("192.168.100.52", { "port": PORT, timeout })
 
 function timeoutHandler(key) {
     return setTimeout(() => {
-        //console.log(key + " dead")
         stunTable.delete(key)   //wyrejestrowanie peera z tablicy
         notify()
-
     }, TIME)
 }
 function send(msg, addr, port) {
@@ -63,8 +61,9 @@ server.on('message', function (message, remote) {
         case "alive":   //odpowiedź na "ping" - peer uczestniczy w sieci
 
             let peer = stunTable.get(pair)
-            clearTimeout(peer)
+            clearTimeout(peer.timeout)
             peer.timeout = timeoutHandler(pair) //odnowienie dzierżawy w tablicy peerów
+            break;
         case "ask":     //pytanie o adresy:porty innych peerów
             console.warn("type:'ask' deprecated")
             notify
