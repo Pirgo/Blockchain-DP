@@ -10,6 +10,7 @@ var client = dgram.createSocket('udp4');
 client.bind(HOST)
 //var server = dgram.createSocket('udp4');
 
+
 client.on('listening', function () {
   var address = client.address();
   console.log('UDP Server listening on ' + address.address + ':' + address.port);
@@ -25,9 +26,12 @@ client.send(messageString, 0, messageString.length, REMOTEPORT, REMOTEHOST, func
   console.log('UDP message sent to ' + HOST +':'+ REMOTEPORT); 
 });
 
-messageString = JSON.stringify({"type":"ask"})
-client.send(messageString, 0, messageString.length, REMOTEPORT, REMOTEHOST, function(err, bytes) {
-  if (err) throw err;
-  console.log('UDP message sent to ' + REMOTEHOST +':'+ REMOTEPORT);
- // client.close();
-});
+messageString = JSON.stringify({"type":"alive"})
+
+setInterval(()=>{
+  client.send(messageString, 0, messageString.length, REMOTEPORT, REMOTEHOST, function(err, bytes) {
+    if (err) throw err;
+    console.log('UDP message sent to ' + REMOTEHOST +':'+ REMOTEPORT);
+   // client.close();
+  });
+},10000)
