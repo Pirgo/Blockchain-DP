@@ -38,7 +38,7 @@ class LecturerTransactionVisitor {
     let res = {};
     res.date = t.date;
     res.studentID = ChainUtil.decryptPublic(this.keyDecrypt, t.masterSignature);
-    res.certfier = t.certfier;
+    res.certifier = t.certifier;
     res.dateOfAward = t.dateOfAward;
     res.info = t.info;
     res.nameOfCertificate = t.nameOfCertificate;

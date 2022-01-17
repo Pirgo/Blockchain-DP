@@ -12,8 +12,8 @@ class CertificateTransactionBuilder extends TransactionBuilder{
         this.transaction = new CertificateTransaction();
     }
 
-    setCertifier(certfier){
-        this.transaction.certfier = certfier;
+    setCertifier(certifier){
+        this.transaction.certifier = certifier;
     }
 
     setDateOfAward(dateOfAward){
@@ -35,7 +35,7 @@ class CertificateTransactionBuilder extends TransactionBuilder{
         this.setMasterSignature(json.masterSignature);
         this.setLecturerID(json.lecturerID);
         this.setVerification(json.verification);
-        this.setCertifier(json.certfier);
+        this.setCertifier(json.certifier);
         this.setDateOfAward(json.dateOfAward);
         this.setInfo(json.info);
         this.setNameOfCertificate(json.nameOfCertificate);

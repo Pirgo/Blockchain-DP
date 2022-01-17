@@ -1,14 +1,15 @@
 var REMOTEPORT = 5001
-var PORT = 5002;
+var PORT = 5003;
 var HOST = '192.168.100.52';
-var REMOTEHOST  = '172.104.240.26'
+var REMOTEHOST  = '192.168.100.52'//'172.104.240.26'
 
 var dgram = require('dgram');
 var message = {type:"register"};
 var messageString = JSON.stringify(message)
 var client = dgram.createSocket('udp4');
-client.bind(PORT,HOST)
+client.bind(HOST)
 //var server = dgram.createSocket('udp4');
+
 
 client.on('listening', function () {
   var address = client.address();
@@ -25,9 +26,12 @@ client.send(messageString, 0, messageString.length, REMOTEPORT, REMOTEHOST, func
   console.log('UDP message sent to ' + HOST +':'+ REMOTEPORT); 
 });
 
-messageString = JSON.stringify({"type":"ask"})
-client.send(messageString, 0, messageString.length, REMOTEPORT, REMOTEHOST, function(err, bytes) {
-  if (err) throw err;
-  console.log('UDP message sent to ' + REMOTEHOST +':'+ REMOTEPORT);
- // client.close();
-});
+messageString = JSON.stringify({"type":"alive"})
+
+setInterval(()=>{
+  client.send(messageString, 0, messageString.length, REMOTEPORT, REMOTEHOST, function(err, bytes) {
+    if (err) throw err;
+    console.log('UDP message sent to ' + REMOTEHOST +':'+ REMOTEPORT);
+   // client.close();
+  });
+},10000)

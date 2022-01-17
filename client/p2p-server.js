@@ -24,8 +24,8 @@ class P2pserver {
         this.blockchain = blockchain;
         this.transactionPool = transactionPool;
         this.peers = [];
-        this.ip = "192.168.0.66"
-        server.bind(P2P_PORT, this.ip);
+        this.ip = Object.values(require('os').networkInterfaces()).reduce((r, list) => r.concat(list.reduce((rr, i) => rr.concat(i.family === 'IPv4' && !i.internal && i.address || []), [])), [])[0]
+        server.bind();  //TODO - jak nie działa, zmienić na server.bind(P2P_PORT,this.ip)
         server.on('listening', function () {
             var address = server.address();
             console.log('UDP Server listening on ' + address.address + ':' + address.port);
@@ -102,7 +102,10 @@ class P2pserver {
                     this.blockchain.replaceChain(data.chain);
                     break;
                 case MESSAGE_TYPE.transaction:
-                    this.transactionPool.add(data.transaction);
+                    const builder = new TransactionBuilder();
+                    builder.buildFromJSON(data);
+                    const transaction = builder.getResult();
+                    this.transactionPool.add(transaction);
                     break;
                 case MESSAGE_TYPE.clear_transactions:
                     this.transactionPool.clear();

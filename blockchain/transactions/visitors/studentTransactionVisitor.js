@@ -36,7 +36,7 @@ class StudentTransactionVisitor{
         let res = {}
         res.date = t.date;
         res.lecturerID = t.lecturerID;
-        res.certfier = t.certfier;
+        res.certifier = t.certifier;
         res.dateOfAward = t.dateOfAward;
         res.info = t.info;
         res.nameOfCertificate = t.nameOfCertificate;
