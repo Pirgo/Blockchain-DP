@@ -21,7 +21,7 @@ export default class AddGrade extends Component {
         const body = {"date": this.state.date, "studentID": parseInt(this.state.studentID), "masterKeyString": this.state.masterKeyString,
                     "lecturerID": parseInt(this.state.lecturerID), "verificationKeyString": this.state.verificationKeyString,
                     "course": this.state.course, "grade": parseInt(this.state.grade), "weight": parseInt(this.state.weight)}
-        
+ 
         axios.post('http://localhost:3001/transact-partialGrade', body)
                 .then(response => {
                     this.setState({ transactions: response.data })
