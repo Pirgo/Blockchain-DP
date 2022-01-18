@@ -4,7 +4,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 import Navigator from "./components/navigator"
 import StudentTransactions from "./components/studenttransactions"
-import AddGrade from "./components/addgrade"
+import LecturerTransactions from './components/lecturertransactions';
+import AddTransaction from './components/addtransaction';
 
 function App() {
   
@@ -15,7 +16,8 @@ function App() {
         <Navigator />
           <Routes>
             <Route path="/getStudent" element={<StudentTransactions />} />
-            <Route path="/addGrade" element={<AddGrade />} />
+            <Route path="/getLecturer" element={<LecturerTransactions />} />
+            <Route path="/addTransaction" element={<AddTransaction />} />
           </Routes>
       </div>
 
