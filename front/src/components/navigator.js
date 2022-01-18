@@ -14,7 +14,7 @@ export default class Navigator extends Component {
         return (
             <div className="masthead clearfix">
                     <div className="container inner">
-                        <h3 className="masthead-brand">Wirtualny dziekanat</h3>
+                        <h3 className="masthead-brand">Blockchain deanery</h3>
                         <nav>
                             <ul className="nav masthead-nav">
                                 <li>

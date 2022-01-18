@@ -108,14 +108,11 @@ export default class StudentTransactions extends Component {
             delete filterDictLocal[key];
             this.setState({ filterDict: filterDictLocal})  
         }
-        
-        console.log(this.state.filterDict) 
     }
 
     dateFormat(date) {
         let newDate = date.split("-");
         let newDateInFormat = newDate[2] + "/" + newDate[1] + "/" + newDate[0];
-        console.log(newDateInFormat);
         return newDateInFormat
     }
 
@@ -138,7 +135,6 @@ export default class StudentTransactions extends Component {
                                     <input type="number" name="weight" onChange={(ev) => this.setFilterParam('weight', parseInt(ev.target.value))}/>
                                 </div>
                             )
-                            break;
                         case 'final grade':
                             return (
                                 <div>
@@ -150,7 +146,6 @@ export default class StudentTransactions extends Component {
                                     <br/>
                                 </div>
                             )
-                            break;
                         case 'certificate': 
                             return (
                                 <div>
@@ -165,7 +160,6 @@ export default class StudentTransactions extends Component {
                                     <br/>
                                 </div>
                             )
-                            break;
                         case 'presence':
                             return (
                                 <div>
@@ -180,7 +174,6 @@ export default class StudentTransactions extends Component {
                                     <br/>
                                 </div>
                             )
-                            break;
                         default:
                             return <p>Filters</p>;
                     }
@@ -197,11 +190,9 @@ export default class StudentTransactions extends Component {
     getTransactions = () => {
         if(this.state.keyDecryptString !== "" && this.state.studentId !== "") {
             const body = this.buildBody();
-            console.log(body);
             axios.post('http://localhost:3001/find-transactions-student', body)
                 .then(response => {
                     this.setState({ transactions: response.data })
-                    console.log(this.state.transactions)
                 }).catch((error) => {
                     console.log(error);
                 })

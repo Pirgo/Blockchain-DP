@@ -8,11 +8,12 @@ export default class AddTransaction extends Component {
             date: new Date().toLocaleDateString().replaceAll('.','/'),
             studentID: "",
             masterKeyString: "",
-            lecturerId: "",
+            lecturerID: "",
             verificationKeyString: "",
             types: [],
             choosenType: "",
-            propertiesDict: {}
+            parameters: {},
+            addedSuccesfully: ""
         }
     }
 
@@ -51,14 +52,11 @@ export default class AddTransaction extends Component {
             delete parametersLocal[key];
             this.setState({ parameters: parametersLocal})  
         }
-        
-        console.log(this.state.parameters) 
     }
 
     dateFormat(date) {
         let newDate = date.split("-");
         let newDateInFormat = newDate[2] + "/" + newDate[1] + "/" + newDate[0];
-        console.log(newDateInFormat);
         return newDateInFormat
     }
 
@@ -82,7 +80,6 @@ export default class AddTransaction extends Component {
                                     <br/>
                                 </div>
                             )
-                            break;
                         case 'final grade':
                             return (
                                 <div>
@@ -94,7 +91,6 @@ export default class AddTransaction extends Component {
                                     <br/>
                                 </div>
                             )
-                            break;
                         case 'certificate': 
                             return (
                                 <div>
@@ -112,7 +108,6 @@ export default class AddTransaction extends Component {
                                     <br/>
                                 </div>
                             )
-                            break;
                         case 'presence':
                             return (
                                 <div>
@@ -127,7 +122,6 @@ export default class AddTransaction extends Component {
                                     <br/>
                                 </div>
                             )
-                            break;
                         default:
                             return <p>Parameters</p>;
                     }
@@ -137,22 +131,38 @@ export default class AddTransaction extends Component {
     }
     
     buildBody() {
-        const body = {"id": parseInt(this.state.lecturerId), "keyDecryptString": this.state.keyDecryptString, "type": this.state.choosenType, "filter": this.state.filterDict}
+        let body = {"date": this.state.date, "studentID": parseInt(this.state.studentID), "type": this.state.choosenType, "masterKeyString": this.state.masterKeyString, "lecturerID": this.state.lecturerID, "verificationKeyString": this.state.verificationKeyString}
+        for (const [key, value] of Object.entries(this.state.parameters)) {
+            body[key] = value;
+        }
         return body;
     }
 
-    getTransactions = () => {
-        if(this.state.keyDecryptString !== "" && this.state.lecturerId !== "") {
-            const body = this.buildBody();
-            console.log(body);
-            axios.post('http://localhost:3001/find-transactions-lecturer', body)
-                .then(response => {
-                    this.setState({ transactions: response.data })
-                    console.log(this.state.transactions)
-                }).catch((error) => {
-                    console.log(error);
-                })
-        }
+    addTransaction = () => {
+        const body = this.buildBody();
+        axios.post('http://localhost:3001/transact', body)
+            .then(response => {
+                axios.get('http://localhost:3001/mine-transactions');
+                this.setState({addedSuccesfully: "true"})
+            }).catch((error) => {
+                console.log(error);
+                this.setState({addedSuccesfully: error})
+            })
+    }
+
+    response() {
+        if (this.state.addedSuccesfully === "true")
+            return (
+                <div><h1>Transaction added succesfully</h1></div>
+            )
+        else if (this.state.addedSuccesfully === "")
+            return (
+                <div></div>
+            )
+        else
+            return (
+                <div><h1>Transaction not added: {this.state.addedSuccesfully}</h1></div>
+            )
     }
 
     render() {
@@ -178,7 +188,10 @@ export default class AddTransaction extends Component {
                 <div id="filterMore">
                     {this.parameters()}
                 </div>
-                <button value={this.state.loaded} onClick={this.getTransactions}>Send</button>
+                <button value={this.state.loaded} onClick={this.addTransaction}>Send</button>
+                <div>
+                    {/* {this.response()} */}
+                </div>
             </div>
         )
     }
