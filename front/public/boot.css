@@ -121,3 +121,16 @@ body {
 .container {
   color: #fff;
 }
+
+.transaction-types label {
+  padding-right: 5px;
+}
+.transaction-types div{
+  float: left;
+  padding-right: 25px;
+}
+
+.transaction-types {
+  display: inline-block;
+  clear: both;
+}
