@@ -26,17 +26,16 @@ export default class Participants extends Component {
         console.log(lecturers);
         let buff = []
         const lecturersItems = lecturers.map((lect) =>
-          <p>{lect}</p>
+          <p key={lect}>{lect}</p>
         );
         const studentsItems = students.map((std) =>
-          <p>{std}</p>
+          <p key={std}>{std}</p>
         );
         buff.push(<h2>Lecturers</h2>);
         buff.push(lecturersItems);
         buff.push(<h2>Students</h2>);
         buff.push(studentsItems);
         return buff;
-        return <h2>Lecturers</h2> + lecturersItems + <h2>Students</h2> + studentsItems;
       }
 
     seeParticipants() {

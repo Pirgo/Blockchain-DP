@@ -24,7 +24,7 @@ export default class Courses extends Component {
     coursesList(props) {
         const courses = props.courses;
         const coursesItems = courses.map((course) =>
-          <p>{course}</p>
+          <p key={course}>{course}</p>
         );
         return coursesItems;
       }
