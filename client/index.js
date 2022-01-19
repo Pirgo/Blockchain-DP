@@ -274,7 +274,10 @@ app.post("/transact", (req, res) => {
     builder.setLecturerID(lecturerID);
     builder.setVerification(verification);
     const transaction = builder.getResult();
-    transactionPool.add(transaction);
+    if(!transactionPool.add(transaction)){
+        res.status(400).json("Verification failed ");
+        return;
+    }
     p2pserver.broadcastTransaction(transaction);
     res.redirect("/transactions");
 });
