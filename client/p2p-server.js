@@ -31,7 +31,7 @@ class P2pserver {
         this.transactionPool = transactionPool;
         this.peers = [];
         this.ip = Object.values(require('os').networkInterfaces()).reduce((r, list) => r.concat(list.reduce((rr, i) => rr.concat(i.family === 'IPv4' && !i.internal && i.address || []), [])), [])[0]
-        server.bind(P2P_PORT, this.ip);  //TODO - jak nie działa, zmienić na server.bind(P2P_PORT,this.ip)
+        server.bind();  //TODO - jak nie działa, zmienić na server.bind(P2P_PORT,this.ip)
         server.on('listening', function () {
             var address = server.address();
             console.log('UDP Server listening on ' + address.address + ':' + address.port);

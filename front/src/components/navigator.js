@@ -23,23 +23,16 @@ export default class Navigator extends Component {
                                     <Link to="/getStudent">See transactions (Student)</Link>
                                 </li>
                                 <li>
-<<<<<<< HEAD
-                                    <Link to="/addTransaction">Add transaction</Link>
-                                </li>
-                                <li>
                                     <Link to="/getLecturer">See transactions (Lecturer)</Link>
-=======
-                                    <Link to="/getStudent">Transactions as student</Link>
                                 </li>
                                 <li>
-                                    <Link to="/getLecturer">Transactions as lecturer</Link>
+                                    <Link to="/addTransaction">Add transaction</Link>
                                 </li>
                                 <li>
                                     <Link to="/getCourses">Courses</Link>
                                 </li>
                                 <li>
                                     <Link to="/getParticipants">Participants</Link>
->>>>>>> ef78d05106ce4023be83ff3facc2f10e20ed8aa6
                                 </li>
                             </ul>
                         </nav>

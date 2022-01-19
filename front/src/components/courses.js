@@ -7,7 +7,8 @@ export default class Courses extends Component {
         super(props);
         this.state = {
             userId: "",
-            courses: []
+            courses: [],
+            addedSuccesfully: "false"
         }
     }
 
@@ -15,9 +16,10 @@ export default class Courses extends Component {
         axios.get('http://localhost:3001/courses/' + this.state.userId)
             .then(response => {
                 this.setState({courses: response.data});
+                this.setState({addedSuccesfully: "true"})
             }).catch((error) => {
                 console.log(error);
-                this.setState({addedSuccesfully: error})
+                this.setState({addedSuccesfully: error.response.data})
             })
     }
 
@@ -30,12 +32,16 @@ export default class Courses extends Component {
       }
 
     seeCourses() {
-        if(this.state.courses.length > 0) {
+        if(this.state.courses.length > 0  && this.state.addedSuccesfully === "true") {
         let courseList =  <div><this.coursesList courses={this.state.courses}/></div>;
         return courseList;
-        } else {
+        } else if (this.state.addedSuccesfully === "false") {
             return (
                 <div></div>
+            )
+        } else {
+            return (
+                <div><p>{this.state.addedSuccesfully}</p></div>
             )
         }
     }
