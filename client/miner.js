@@ -7,10 +7,11 @@ class Miner{
 
     mine(){
         const transactions = this.transactionPool.transactions;
-        const block = this.blockchain.addBlock(transactions);
-        this.p2pserver.syncChain();
+        const block = this.blockchain.addBlock(transactions);   //synchronicznie
+        this.p2pserver.broadcastBlock(block)    
+        //this.p2pserver.syncChain();
         this.transactionPool.clear();
-        this.p2pserver.broadcastClearTransactions();
+       // this.p2pserver.broadcastClearTransactions();
         return block;
     }
 }
