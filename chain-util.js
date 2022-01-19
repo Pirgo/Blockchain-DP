@@ -111,6 +111,24 @@ class ChainUtil {
     return data.key;
   }
 
+  static getStudentsID(genesis){
+    return genesis.data.reduce((acc, el) => {
+      if (el.role == "Student"){
+        acc.push(el.ID);
+      }
+      return acc;
+    }, [])
+  }
+
+  static getLecturersID(genesis){
+    return genesis.data.reduce((acc, el) => {
+      if (el.role == "Lecturer"){
+        acc.push(el.ID);
+      }
+      return acc;
+    }, [])
+  }
+
   static id() {
     return uuid.v1();
   }

@@ -33,7 +33,7 @@
     "role": "Student",
     "ID": 3001,
     "key": "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA2iTK9sM+KJpJK3bdQExJwc8z7ZbmsltgaMIHDJAVHI/B2aiKyx2gF3zrjtIbe94C14o9BJNHcNQ8EmbwHK4LFu9GMO1QLigULuXSO3/3TRsbkXsR17rH4zXmNJkSGEz9CzYXwIZEI53KfTKDken3/DFaZ/OIwIyR8sf3C794Zb/eckUmRJCc/MvJcQ5BAGENupIMaFZvGJ+YFr4dOAoE+l6v8Xfk59Wzd4Aae+Xmq9hQI/KDzjeSxogtGC3poUiKMr2U2peQ4Mvxj5JdWjIVZ9LKHeOP6UamY7utb8exAmXH6DA8bzZwGczCOWDREX3u5q7u94nH5mawuPYHvaVgZ2WxZ7l14M2Uaf+bEagH4Eq7p5sKZjTy+QcfAydOG1YyGohxeSL0aDUDNa3dskLgp9JR6Y3o7mH7VA54FL2d1Vi0Bsmald7W2+Jo9+5ZaLMirgWplYgIiCloVC3SSpdeCmg1sDAb2sPeS8OmyTyDGciWRlQnpeUR9vVItb7zNQR5zcKQmRx/9b8+GKOf6wQv3yvd3A0yoCy4IyPe31PcuzzNLKZeixR3bmM3lLI8RmKL7WlpDOutRxr0OvgaoD91BQmWDdgxn4vo9vfZoNQhPdNaS2VwkGRrBGu2auCjHfjPHNeJQqdB82n58t9V1zyKUYONpU1sB4D+K9SR39ftHUUCAwEAAQ==",
-    "courses": ["Algebra", "Algorithms"]
+    "courses": ["Unix", "Algorithms"]
   },
   {
     "role": "Student",

@@ -14,6 +14,10 @@ class CertificateTransaction extends Transaction{
     visit(visitor){
         return visitor.visitCertificateTransaction(this);
     }
+
+    checkTransaction(){
+        
+    }
 }
 
 module.exports = CertificateTransaction;

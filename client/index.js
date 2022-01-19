@@ -26,7 +26,10 @@ const LecturerTransactionVisitor = require("../blockchain/transactions/visitors/
 const HTTP_PORT = process.env.HTTP_PORT || 3001;
 
 //create a new app
-const app = express();
+const app  = express();
+const cors = require("cors");
+
+app.use(cors())
 
 //using the blody parser middleware
 app.use(bodyParser.json());
@@ -135,6 +138,24 @@ app.get("/courses/:id", (req, res) => {
     }
     res.json(data.courses);
 })
+//zwraca studentow z kursem
+app.get("/students/:course", (req,res)=>{
+    const course = req.params.course;
+    const students = blockchain.getGenesis().data.reduce((acc, p) => {
+        if(p.courses.includes(course)){
+            if(p.role === "Student"){
+                acc.students.push(p.ID);
+            }
+            else{
+                acc.lecturers.push(p.ID);
+            }
+        }
+        return acc;
+    }, {lecturers: [], students: []});
+    res.json(students);
+})
+
+
 
 app.post("/find-transactions-student", (req, res) => {
     const { id, keyDecryptString, type } = req.body;
@@ -197,6 +218,14 @@ app.post("/transact", (req, res) => {
         verificationKeyString,
         type,
     } = req.body;
+    if(!ChainUtil.getStudentsID(blockchain.getGenesis()).includes(studentID)){
+        res.status(400).json("Wrong student id");
+        return;
+    }
+    if(!ChainUtil.getLecturersID(blockchain.getGenesis()).includes(lecturerID)){
+        res.status.json("Wrong lecturer id");
+        return
+    }
     try {
         var masterSignatureKey = ChainUtil.createPrivateKey(
             "Lecturer",
@@ -274,7 +303,18 @@ app.post("/transact", (req, res) => {
     builder.setLecturerID(lecturerID);
     builder.setVerification(verification);
     const transaction = builder.getResult();
-    transactionPool.add(transaction);
+    try{
+        const studentCourses = blockchain.getGenesis().data.find(e => e.ID == studentID);
+        const lecturerCourses = blockchain.getGenesis().data.find(e => e.ID == lecturerID);
+        transaction.checkTransaction(lecturerCourses.courses, studentCourses.courses);
+    }catch(e){
+        res.status(400).json(e.message);
+        return;
+    }
+    if(!transactionPool.add(transaction)){
+        res.status(400).json("Verification failed ");
+        return;
+    }
     p2pserver.broadcastTransaction(transaction);
     res.redirect("/transactions");
 });

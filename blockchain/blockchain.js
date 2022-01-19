@@ -23,6 +23,7 @@ class Blockchain {
         return this.chain[0];
     }
 
+
     // getVerificationKey(id){
     //     const genesis = this.getGenesis();
     //     const lecturers = genesis.data.lecturers;

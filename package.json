@@ -21,9 +21,10 @@
   "homepage": "https://github.com/Pirgo/Blockchain-DP#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
     "crypto-js": "^4.1.1",
     "elliptic": "^6.5.4",
-    "express": "^4.17.1",
+    "express": "^4.17.2",
     "js-crypto-rsa": "^1.0.3",
     "uuid": "^8.3.2",
     "ws": "^8.3.0"

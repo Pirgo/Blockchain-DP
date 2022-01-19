@@ -5,7 +5,9 @@ const TransactionBuilder = require('../blockchain/transactions/builders/transact
 const Blockchain = require('../blockchain/blockchain');
 const { throws } = require("assert");
 //declare the peer to peer server port 
+
 const P2P_PORT = process.env.P2P_PORT || 5001;   
+
 const STUN_ADDR = '172.104.240.26'
 const STUN_PORT = 5001
 const KEEP_ALIVE_INTERVAL = 30000
