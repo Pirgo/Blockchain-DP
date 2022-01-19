@@ -12,19 +12,22 @@ export default class Navigator extends Component {
 
     render() {
         return (
-            <div className="masthead clearfix">
+            <div>
+                <div>
+                    <h2><strong>Virtual Deanery</strong></h2>
+                    <p><strong>Based on Blockchain</strong></p>
+                </div>
                     <div className="container inner">
-                        <h3 className="masthead-brand">Blockchain deanery</h3>
                         <nav>
                             <ul className="nav masthead-nav">
+                                <li>
+                                    <Link to="/getStudent">See transactions (Student)</Link>
+                                </li>
                                 <li>
                                     <Link to="/addTransaction">Add transaction</Link>
                                 </li>
                                 <li>
-                                    <Link to="/getStudent">See transactions as student</Link>
-                                </li>
-                                <li>
-                                    <Link to="/getLecturer">See transactions as lecturer</Link>
+                                    <Link to="/getLecturer">See transactions (Lecturer)</Link>
                                 </li>
                             </ul>
                         </nav>

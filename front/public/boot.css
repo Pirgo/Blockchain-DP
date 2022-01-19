@@ -6,7 +6,7 @@
 a,
 a:focus,
 a:hover {
-  color: #fff;
+  color: #d6cbd3;
 }
 
 /* Custom default button */
@@ -30,6 +30,15 @@ body {
   text-align: center;
   text-shadow: 0 1px 3px rgba(0,0,0,.5);
 }
+h2 {
+  text-align: center;
+  margin-top: -50px;
+}
+p {
+  color: rgba(247, 243, 243, 0.87);
+  text-align: center;
+}
+
 .masthead-brand {
     color: #fff;
 }
@@ -62,6 +71,8 @@ body {
 
 .masthead-nav > li {
   display: inline-block;
+  margin-left: auto;
+  margin-right:auto;
 }
 .masthead-nav > li + li {
   margin-left: 20px;
@@ -90,10 +101,10 @@ body {
 
 @media (min-width: 768px) {
   .masthead-brand {
-    float: left;
+    float: middle;
   }
   .masthead-nav {
-    float: right;
+    float: middle;
   }
 }
 
@@ -119,7 +130,7 @@ body {
 }
 
 .container {
-  color: #fff;
+  color: rgb(255, 255, 255);
 }
 
 .transaction-types label {
