@@ -9,7 +9,6 @@ export default class Navigator extends Component {
         }
     }
 
-
     render() {
         return (
             <div className="masthead clearfix">
@@ -21,10 +20,16 @@ export default class Navigator extends Component {
                                     <Link to="/addTransaction">Add transaction</Link>
                                 </li>
                                 <li>
-                                    <Link to="/getStudent">See transactions as student</Link>
+                                    <Link to="/getStudent">Transactions as student</Link>
                                 </li>
                                 <li>
-                                    <Link to="/getLecturer">See transactions as lecturer</Link>
+                                    <Link to="/getLecturer">Transactions as lecturer</Link>
+                                </li>
+                                <li>
+                                    <Link to="/getCourses">Courses</Link>
+                                </li>
+                                <li>
+                                    <Link to="/getParticipants">Participants</Link>
                                 </li>
                             </ul>
                         </nav>
