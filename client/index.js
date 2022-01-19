@@ -26,7 +26,10 @@ const LecturerTransactionVisitor = require("../blockchain/transactions/visitors/
 const HTTP_PORT = process.env.HTTP_PORT || 3001;
 
 //create a new app
-const app = express();
+const app  = express();
+const cors = require("cors");
+
+app.use(cors())
 
 //using the blody parser middleware
 app.use(bodyParser.json());
