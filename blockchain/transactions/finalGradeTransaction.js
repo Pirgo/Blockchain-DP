@@ -12,6 +12,11 @@ class FinalGradeTransaction extends Transaction{
     visit(visitor){
         return visitor.visitFinalGradeTransaction(this);
     }
+    
+    checkTransaction(coursesLecturer, coursesStudent){
+        if(!coursesLecturer.includes(this.course)) throw new Error('Lecturer doesnt conduct the course')
+        if(!coursesStudent.includes(this.course)) throw new Error('Student is not attending at this course');
+    }
 }
 
 module.exports = FinalGradeTransaction;

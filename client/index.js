@@ -200,6 +200,14 @@ app.post("/transact", (req, res) => {
         verificationKeyString,
         type,
     } = req.body;
+    if(!ChainUtil.getStudentsID(blockchain.getGenesis()).includes(studentID)){
+        res.status(400).json("Wrong student id");
+        return;
+    }
+    if(!ChainUtil.getLecturersID(blockchain.getGenesis()).includes(lecturerID)){
+        res.status.json("Wrong lecturer id");
+        return
+    }
     try {
         var masterSignatureKey = ChainUtil.createPrivateKey(
             "Lecturer",
@@ -277,6 +285,14 @@ app.post("/transact", (req, res) => {
     builder.setLecturerID(lecturerID);
     builder.setVerification(verification);
     const transaction = builder.getResult();
+    try{
+        const studentCourses = blockchain.getGenesis().data.find(e => e.ID == studentID);
+        const lecturerCourses = blockchain.getGenesis().data.find(e => e.ID == lecturerID);
+        transaction.checkTransaction(lecturerCourses.courses, studentCourses.courses);
+    }catch(e){
+        res.status(400).json(e.message);
+        return;
+    }
     if(!transactionPool.add(transaction)){
         res.status(400).json("Verification failed ");
         return;
