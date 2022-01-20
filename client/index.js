@@ -139,9 +139,9 @@ app.get("/courses/:id", (req, res) => {
     res.json(data.courses);
 })
 //zwraca studentow z kursem
-app.get("/students/:course", (req,res)=>{
+app.get("/people/:course", (req,res)=>{
     const course = req.params.course;
-    const students = blockchain.getGenesis().data.reduce((acc, p) => {
+    const people = blockchain.getGenesis().data.reduce((acc, p) => {
         if(p.courses.includes(course)){
             if(p.role === "Student"){
                 acc.students.push(p.ID);
@@ -152,7 +152,11 @@ app.get("/students/:course", (req,res)=>{
         }
         return acc;
     }, {lecturers: [], students: []});
-    res.json(students);
+    if(people.lecturers.length === 0 && people.students.length === 0){
+        res.status(400).json("No such course")
+        return;
+    }
+    res.json(people);
 })
 
 
