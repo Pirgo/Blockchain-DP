@@ -7,16 +7,18 @@ export default class Participants extends Component {
         super(props);
         this.state = {
             course: "",
-            participants: []
+            participants: [],
+            participantsLoaded: "false"
         }
     }
 
     getCourses = () => {
-        axios.get('http://localhost:3001/students/' + this.state.course)
+        axios.get('http://localhost:3001/people/' + this.state.course)
             .then(response => {
                 this.setState({participants: response.data});
+                this.setState({participantsLoaded: "true"})
             }).catch((error) => {
-                console.log(error);
+                this.setState({participantsLoaded: error.response.data})
             })
     }
 
@@ -40,12 +42,16 @@ export default class Participants extends Component {
 
     seeParticipants() {
         console.log(this.state.participants);
-        if(this.state.participants.lecturers || this.state.participants.students) {
+        if(this.state.participantsLoaded === "true") {
             let partList =  <div><this.partList participants={this.state.participants}/></div>;
             return partList;
-        } else {
+        } else if (this.state.participantsLoaded === "false" ){
             return (
                 <div></div>
+            )
+        } else {
+            return (
+                <div><p>{this.state.participantsLoaded}</p></div>
             )
         }
     }
