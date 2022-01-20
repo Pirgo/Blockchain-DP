@@ -13,7 +13,7 @@ export default class AddTransaction extends Component {
             types: [],
             choosenType: "",
             parameters: {},
-            addedSuccesfully: ""
+            addedSuccesfully: "false"
         }
     }
 
@@ -123,7 +123,7 @@ export default class AddTransaction extends Component {
                                 </div>
                             )
                         default:
-                            return <p>Parameters</p>;
+                            return <p></p>;
                     }
                 })()}
             </div>
@@ -131,7 +131,7 @@ export default class AddTransaction extends Component {
     }
     
     buildBody() {
-        let body = {"date": this.state.date, "studentID": parseInt(this.state.studentID), "type": this.state.choosenType, "masterKeyString": this.state.masterKeyString, "lecturerID": this.state.lecturerID, "verificationKeyString": this.state.verificationKeyString}
+        let body = {"date": this.state.date, "studentID": parseInt(this.state.studentID), "type": this.state.choosenType, "masterKeyString": this.state.masterKeyString, "lecturerID": parseInt(this.state.lecturerID), "verificationKeyString": this.state.verificationKeyString}
         for (const [key, value] of Object.entries(this.state.parameters)) {
             body[key] = value;
         }
@@ -145,8 +145,8 @@ export default class AddTransaction extends Component {
                 axios.get('http://localhost:3001/mine-transactions');
                 this.setState({addedSuccesfully: "true"})
             }).catch((error) => {
-                console.log(error);
-                this.setState({addedSuccesfully: error})
+                this.setState({addedSuccesfully: error.response.data})
+                console.log(this.state.addedSuccesfully);
             })
     }
 
@@ -155,7 +155,7 @@ export default class AddTransaction extends Component {
             return (
                 <div><h1>Transaction added succesfully</h1></div>
             )
-        else if (this.state.addedSuccesfully === "")
+        else if (this.state.addedSuccesfully === "false")
             return (
                 <div></div>
             )
@@ -190,7 +190,7 @@ export default class AddTransaction extends Component {
                 </div>
                 <button value={this.state.loaded} onClick={this.addTransaction}>Send</button>
                 <div>
-                    {/* {this.response()} */}
+                    {this.response()}
                 </div>
             </div>
         )

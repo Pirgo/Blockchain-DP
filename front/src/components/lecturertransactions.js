@@ -30,7 +30,8 @@ export default class LecturerTransactions extends Component {
             transactions: [],
             types: [],
             choosenType: "",
-            filterDict: {}
+            filterDict: {},
+            transactionLoaded: "false"
         }
     }
 
@@ -46,39 +47,40 @@ export default class LecturerTransactions extends Component {
 
  
     transactions() {
-        let transList = []; 
-        switch (this.state.choosenType) {
-            case "partial grade":
-                transList = this.state.transactions.map(currTrans => {
-                    return <PartialGradeDisplay currTrans={currTrans}/>;
-                })
-                break;
-            case "final grade":
-                transList = this.state.transactions.map(currTrans => {
-                    return <PartialGradeDisplay currTrans={currTrans}/>;
-                })
-                break;
-            case "presence":
-                transList = this.state.transactions.map(currTrans => {
-                    return <PartialGradeDisplay currTrans={currTrans}/>;
-                })
-                break;
-            case "certificate":
-                transList = this.state.transactions.map(currTrans => {
-                    return <PartialGradeDisplay currTrans={currTrans}/>;
-                })
-                break;
-            default:
-                break;
-        }
-        if (transList.length > 0) {
-            return transList
-        }
-        else {
+        if(this.state.transactionLoaded === "true") {
+            let transList = []; 
+            switch (this.state.choosenType) {
+                case "partial grade":
+                    transList = this.state.transactions.map(currTrans => {
+                        return <PartialGradeDisplay currTrans={currTrans}/>;
+                    })
+                    break;
+                case "final grade":
+                    transList = this.state.transactions.map(currTrans => {
+                        return <PartialGradeDisplay currTrans={currTrans}/>;
+                    })
+                    break;
+                case "presence":
+                    transList = this.state.transactions.map(currTrans => {
+                        return <PartialGradeDisplay currTrans={currTrans}/>;
+                    })
+                    break;
+                case "certificate":
+                    transList = this.state.transactions.map(currTrans => {
+                        return <PartialGradeDisplay currTrans={currTrans}/>;
+                    })
+                    break;
+                default:
+                    break;
+            }
+            return transList;
+        } else if (this.state.transactionLoaded === "false") {
             return (
-                <>
-                    <h1>Transactions</h1>
-                </>
+                <div></div>
+            )
+        } else {
+            return (
+                <div><p>{this.state.transactionLoaded}</p></div>
             )
         }
     }
@@ -205,8 +207,9 @@ export default class LecturerTransactions extends Component {
             axios.post('http://localhost:3001/find-transactions-lecturer', body)
                 .then(response => {
                     this.setState({ transactions: response.data })
+                    this.setState({ transactionLoaded: "true" });
                 }).catch((error) => {
-                    console.log(error);
+                    this.setState({ transactionLoaded: error.response.data})
                 })
         }
     }

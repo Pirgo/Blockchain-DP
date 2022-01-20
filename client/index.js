@@ -227,7 +227,7 @@ app.post("/transact", (req, res) => {
         return;
     }
     if(!ChainUtil.getLecturersID(blockchain.getGenesis()).includes(lecturerID)){
-        res.status.json("Wrong lecturer id");
+        res.status(400).json("Wrong lecturer id");
         return
     }
     try {

@@ -18,7 +18,6 @@ export default class Courses extends Component {
                 this.setState({courses: response.data});
                 this.setState({addedSuccesfully: "true"})
             }).catch((error) => {
-                console.log(error);
                 this.setState({addedSuccesfully: error.response.data})
             })
     }
