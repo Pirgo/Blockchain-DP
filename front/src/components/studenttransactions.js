@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 
-const PartialGradeDisplay = props => (
+const PresenceDisplay = props => (
     <div className="row border align-items-center">
         <div className="col-2">
             <p>Lecturer: {props.currTrans.lecturerID}</p>
@@ -17,6 +17,66 @@ const PartialGradeDisplay = props => (
         </div>
         <div className="col-2">
             <p>Presence: {props.currTrans.presence}</p>
+        </div>
+    </div>
+)
+
+const PartialGradeDisplay = props => (
+    <div className="row border align-items-center">
+        <div className="col-2">
+            <p>Lecturer: {props.currTrans.lecturerID}</p>
+        </div>
+        <div className="col-2">
+            <p>Date: {props.currTrans.date}</p>
+        </div>
+        <div className="col-2">
+            <p>Course: {props.currTrans.course}</p>
+        </div>
+        <div className="col-2">
+            <p>Grade value: {props.currTrans.grade}</p>
+        </div>
+        <div className="col-2">
+            <p>Grade weight: {props.currTrans.weight}</p>
+        </div>
+    </div>
+)
+
+const FinalGradeDisplay = props => (
+    <div className="row border align-items-center">
+        <div className="col-2">
+            <p>Lecturer: {props.currTrans.lecturerID}</p>
+        </div>
+        <div className="col-2">
+            <p>Date: {props.currTrans.date}</p>
+        </div>
+        <div className="col-2">
+            <p>Course: {props.currTrans.course}</p>
+        </div>
+        <div className="col-2">
+            <p>Grade value: {props.currTrans.grade}</p>
+        </div>
+    </div>
+)
+
+const CertificateDisplay = props => (
+    <div className="row border align-items-center">
+        <div className="col-2">
+            <p>Lecturer: {props.currTrans.lecturerID}</p>
+        </div>
+        <div className="col-2">
+            <p>Date: {props.currTrans.date}</p>
+        </div>
+        <div className="col-2">
+            <p>Certifier: {props.currTrans.certifier}</p>
+        </div>
+        <div className="col-2">
+            <p>Date of award: {props.currTrans.dateOfAward}</p>
+        </div>
+        <div className="col-2">
+            <p>Name of certificate: {props.currTrans.nameOfCertificate}</p>
+        </div>
+        <div className="col-2">
+            <p>Info: {props.currTrans.info}</p>
         </div>
     </div>
 )
@@ -57,17 +117,17 @@ export default class StudentTransactions extends Component {
                     break;
                 case "final grade":
                     transList = this.state.transactions.map(currTrans => {
-                        return <PartialGradeDisplay currTrans={currTrans}/>;
+                        return <FinalGradeDisplay currTrans={currTrans}/>;
                     })
                     break;
                 case "presence":
                     transList = this.state.transactions.map(currTrans => {
-                        return <PartialGradeDisplay currTrans={currTrans}/>;
+                        return <PresenceDisplay currTrans={currTrans}/>;
                     })
                     break;
                 case "certificate":
                     transList = this.state.transactions.map(currTrans => {
-                        return <PartialGradeDisplay currTrans={currTrans}/>;
+                        return <CertificateDisplay currTrans={currTrans}/>;
                     })
                     break;
                 default:
@@ -93,7 +153,7 @@ export default class StudentTransactions extends Component {
                     return (
                         <div key={transType}>
                             <label key={{transType} + 'label'}>{transType}</label>
-                            <input type="radio" key={transType} name="transType" value={transType} onChange={ev => this.setState({choosenType: transType, filterDict: {}})}/>
+                            <input type="radio" key={transType} name="transType" value={transType} onChange={ev => this.setState({choosenType: transType, filterDict: {}, transactionLoaded: "false"})}/>
                         </div>
                     )
                     })}
