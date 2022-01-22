@@ -8,6 +8,7 @@ import LecturerTransactions from './components/lecturertransactions';
 import AddTransaction from './components/addtransaction';
 import Courses from './components/courses';
 import Participants from './components/participants';
+import MainSite from './components/mainsite';
 
 function App() {
   
@@ -17,6 +18,7 @@ function App() {
       <div className='container'>
         <Navigator />
           <Routes>
+            <Route path="/" element={<MainSite />} />
             <Route path="/getCourses" element={<Courses />} />
             <Route path="/getParticipants" element={<Participants />} />
             <Route path="/getStudent" element={<StudentTransactions />} />
