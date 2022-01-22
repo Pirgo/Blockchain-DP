@@ -33,9 +33,9 @@ export default class Participants extends Component {
         const studentsItems = students.map((std) =>
           <p key={std}>{std}</p>
         );
-        buff.push(<h2>Lecturers</h2>);
+        buff.push(<h2>Lecturers IDs</h2>);
         buff.push(lecturersItems);
-        buff.push(<h2>Students</h2>);
+        buff.push(<h2>Students IDs</h2>);
         buff.push(studentsItems);
         return buff;
       }
@@ -58,14 +58,14 @@ export default class Participants extends Component {
 
     render() {
         return (
-            <div className="container">
+            <div className="flex-container">
                 <div>
                     <label>Course name:</label>
                     <input type="text" name="course" value={this.state.course} onChange={ev => this.setState({course: ev.target.value})}/>
                     <br/>
                 </div>
                 <button value={this.state.loaded} onClick={this.getCourses}>Get courses</button>
-                <div>
+                <div className="courses-container">
                     {this.seeParticipants()}
                 </div>
             </div>

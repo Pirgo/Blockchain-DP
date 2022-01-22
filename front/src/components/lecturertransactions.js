@@ -127,64 +127,65 @@ export default class LecturerTransactions extends Component {
                         case 'partial grade':
                             return (
                                 <div>
-                                    <label>Grade value:</label>
-                                    <input type="number" name="grade" onChange={(ev) => this.setFilterParam('grade', parseInt(ev.target.value))}/>
+                                    <label>Student ID:</label>
+                                    <input type="number" name="studentId" onChange={(ev) => this.setFilterParam('studentID', parseInt(ev.target.value))}/>
                                     <br/>
                                     <label>Course:</label>
                                     <input type="text" name="course" onChange={(ev) => this.setFilterParam('course', ev.target.value)}/>
                                     <br/>
+                                    <label>Grade value:</label>
+                                    <input type="number" name="grade" onChange={(ev) => this.setFilterParam('grade', parseInt(ev.target.value))}/>
+                                    <br/>
                                     <label>Grade weight:</label>
                                     <input type="number" name="weight" onChange={(ev) => this.setFilterParam('weight', parseInt(ev.target.value))}/>
                                     <br/>
-                                    <label>Student id:</label>
-                                    <input type="number" name="studentId" onChange={(ev) => this.setFilterParam('studentID', parseInt(ev.target.value))}/>
                                 </div>
                             )
                         case 'final grade':
                             return (
                                 <div>
-                                    <label>Grade value:</label>
-                                    <input type="number" name="grade" onChange={(ev) => this.setFilterParam('grade', parseInt(ev.target.value))}/>
+                                    <label>Student ID:</label>
+                                    <input type="number" name="studentId" onChange={(ev) => this.setFilterParam('studentID', parseInt(ev.target.value))}/>
                                     <br/>
                                     <label>Course:</label>
                                     <input type="text" name="course" onChange={(ev) => this.setFilterParam('course', ev.target.value)}/>
                                     <br/>
-                                    <label>Student id:</label>
-                                    <input type="number" name="studentId" onChange={(ev) => this.setFilterParam('studentID', parseInt(ev.target.value))}/>
+                                    <label>Grade value:</label>
+                                    <input type="number" name="grade" onChange={(ev) => this.setFilterParam('grade', parseInt(ev.target.value))}/>
                                     <br/>
                                 </div>
                             )
                         case 'certificate': 
                             return (
                                 <div>
+                                    <label>Student ID:</label>
+                                    <input type="number" name="studentId" onChange={(ev) => this.setFilterParam('studentID', parseInt(ev.target.value))}/>
+                                    <br/>
                                     <label>Certifier:</label>
                                     <input type="text" name="certifier" onChange={(ev)   => this.setFilterParam('certifier', ev.target.value)}/>
                                     <br/>
-                                    <label>dateOfAward:</label>dateOfAward
-                                    <input type="date" name="course" onChange={(ev) => this.setFilterParam('dateOfAward', this.dateFormat(ev.target.value))}/>
-                                    <br/>
-                                    <label>Name of certificate:</label>
+                                    <label>Certificate name:</label>
                                     <input type="text" name="nameOfCertificate" onChange={(ev) => this.setFilterParam('nameOfCertificate', ev.target.value)}/>
                                     <br/>
-                                    <label>Student id:</label>
-                                    <input type="number" name="studentId" onChange={(ev) => this.setFilterParam('studentID', parseInt(ev.target.value))}/>
+                                    <label>Date award:</label>
+                                    <input type="date" name="course" onChange={(ev) => this.setFilterParam('dateOfAward', this.dateFormat(ev.target.value))}/>
                                     <br/>
                                 </div>
                             )
                         case 'presence':
                             return (
                                 <div>
-                                    <label>Presence value:</label>
-                                    <input type="text" name="presence" onChange={(ev)   => this.setFilterParam('presence', parseInt(ev.target.value))}/>
+                                    <label>Student ID:</label>
+                                    <input type="number" name="studentId" onChange={(ev) => this.setFilterParam('studentID', parseInt(ev.target.value))}/>
                                     <br/>
                                     <label>Course:</label>
                                     <input type="text" name="course" onChange={(ev) => this.setFilterParam('course', ev.target.value)}/>
                                     <br/>
+                                    <label>Presence value:</label>
+                                    <input type="text" name="presence" onChange={(ev)   => this.setFilterParam('presence', parseInt(ev.target.value))}/>
+                                    <br/>
                                     <label>Date class:</label>
                                     <input type="date" name="dateClass" onChange={(ev) => this.setFilterParam('dateClass', this.dateFormat(ev.target.value))}/>
-                                    <br/>
-                                    <label>Student id:</label>
-                                    <input type="number" name="studentId" onChange={(ev) => this.setFilterParam('studentID', parseInt(ev.target.value))}/>
                                     <br/>
                                 </div>
                             )
@@ -216,12 +217,12 @@ export default class LecturerTransactions extends Component {
 
     render() {
         return (
-            <div className="container">
+            <div className="flex-container">
                 <div className="transaction-types">
                     {this.transactionTypes()}
                 </div>
                 <div>
-                    <label>Lecturer id:</label>
+                    <label>Lecturer ID:</label>
                     <input type="text" name="lecturerId" value={this.state.lecturerId} onChange={ev => this.setState({lecturerId: ev.target.value})}/>
                     <br/>
                     <label>Lecturer key:</label>

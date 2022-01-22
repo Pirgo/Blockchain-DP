@@ -69,11 +69,11 @@ export default class AddTransaction extends Component {
                         case 'partial grade':
                             return (
                                 <div>
-                                    <label>Grade value:</label>
-                                    <input type="number" name="grade" onChange={(ev) => this.setFilterParam('grade', parseInt(ev.target.value))}/>
-                                    <br/>
                                     <label>Course:</label>
                                     <input type="text" name="course" onChange={(ev) => this.setFilterParam('course', ev.target.value)}/>
+                                    <br/>
+                                    <label>Grade value:</label>
+                                    <input type="number" name="grade" onChange={(ev) => this.setFilterParam('grade', parseInt(ev.target.value))}/>
                                     <br/>
                                     <label>Grade weight:</label>
                                     <input type="number" name="weight" onChange={(ev) => this.setFilterParam('weight', parseInt(ev.target.value))}/>
@@ -83,11 +83,11 @@ export default class AddTransaction extends Component {
                         case 'final grade':
                             return (
                                 <div>
-                                    <label>Grade value:</label>
-                                    <input type="number" name="grade" onChange={(ev) => this.setFilterParam('grade', parseInt(ev.target.value))}/>
-                                    <br/>
                                     <label>Course:</label>
                                     <input type="text" name="course" onChange={(ev) => this.setFilterParam('course', ev.target.value)}/>
+                                    <br/>
+                                    <label>Grade value:</label>
+                                    <input type="number" name="grade" onChange={(ev) => this.setFilterParam('grade', parseInt(ev.target.value))}/>
                                     <br/>
                                 </div>
                             )
@@ -97,25 +97,25 @@ export default class AddTransaction extends Component {
                                     <label>Certifier:</label>
                                     <input type="text" name="certifier" onChange={(ev)   => this.setFilterParam('certifier', ev.target.value)}/>
                                     <br/>
-                                    <label>dateOfAward:</label>dateOfAward
-                                    <input type="date" name="course" onChange={(ev) => this.setFilterParam('dateOfAward', this.dateFormat(ev.target.value))}/>
+                                    <label>Certificate name:</label>
+                                    <input type="text" name="nameOfCertificate" onChange={(ev) => this.setFilterParam('nameOfCertificate', ev.target.value)}/>
                                     <br/>
                                     <label>Info:</label>
                                     <input type="text" name="info" onChange={(ev) => this.setFilterParam('info', ev.target.value)}/>
                                     <br/>
-                                    <label>Name of certificate:</label>
-                                    <input type="text" name="nameOfCertificate" onChange={(ev) => this.setFilterParam('nameOfCertificate', ev.target.value)}/>
+                                    <label>Date award:</label>
+                                    <input type="date" name="course" onChange={(ev) => this.setFilterParam('dateOfAward', this.dateFormat(ev.target.value))}/>
                                     <br/>
                                 </div>
                             )
                         case 'presence':
                             return (
                                 <div>
-                                    <label>Presence value:</label>
-                                    <input type="text" name="presence" onChange={(ev)   => this.setFilterParam('presence', parseInt(ev.target.value))}/>
-                                    <br/>
                                     <label>Course:</label>
                                     <input type="text" name="course" onChange={(ev) => this.setFilterParam('course', ev.target.value)}/>
+                                    <br/>
+                                    <label>Presence value:</label>
+                                    <input type="text" name="presence" onChange={(ev)   => this.setFilterParam('presence', parseInt(ev.target.value))}/>
                                     <br/>
                                     <label>Date class:</label>
                                     <input type="date" name="dateClass" onChange={(ev) => this.setFilterParam('dateClass', this.dateFormat(ev.target.value))}/>
@@ -167,18 +167,18 @@ export default class AddTransaction extends Component {
 
     render() {
         return (
-            <div className="container">
+            <div className="flex-container">
                 <div className="transaction-types">
                     {this.transactionTypes()}
                 </div>
                 <div>
-                    <label>Student id:</label>
+                    <label>Student ID:</label>
                     <input type="text" name="studentID" value={this.state.studentID} onChange={ev => this.setState({studentID: ev.target.value})}/>
                     <br/>
-                    <label>Lecturer encrypt key:</label>
+                    <label>Lecturer key(encrypt):</label>
                     <input type="text" name="masterKeyString" value={this.state.masterKeyString} onChange={ev => this.setState({masterKeyString: ev.target.value})}/>
                     <br/>
-                    <label>Lecturer id:</label>
+                    <label>Lecturer ID:</label>
                     <input type="text" name="lecturerID" value={this.state.lecturerID} onChange={ev => this.setState({lecturerID: ev.target.value})}/>
                     <br/>
                     <label>Verification key:</label>

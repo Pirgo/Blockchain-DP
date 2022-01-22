@@ -47,14 +47,15 @@ export default class Courses extends Component {
 
     render() {
         return (
-            <div className="container">
+            <div className="flex-container">
                 <div>
-                    <label>Student or lecturer id:</label>
+                    <label>Student/Lecturer ID:</label>
                     <input type="text" name="userId" value={this.state.userId} onChange={ev => this.setState({userId: ev.target.value})}/>
                     <br/>
                 </div>
                 <button value={this.state.loaded} onClick={this.getCourses}>Get courses</button>
-                <div>
+                <div className="courses-container">
+                    <label>Courses assigned</label>
                     {this.seeCourses()}
                 </div>
             </div>

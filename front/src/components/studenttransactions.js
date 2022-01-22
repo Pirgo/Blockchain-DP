@@ -128,24 +128,25 @@ export default class StudentTransactions extends Component {
                         case 'partial grade':
                             return (
                                 <div>
-                                    <label>Grade value:</label>
-                                    <input type="number" name="grade" onChange={(ev) => this.setFilterParam('grade', parseInt(ev.target.value))}/>
-                                    <br/>
                                     <label>Course:</label>
                                     <input type="text" name="course" onChange={(ev) => this.setFilterParam('course', ev.target.value)}/>
                                     <br/>
+                                    <label>Grade value:</label>
+                                    <input type="number" name="grade" onChange={(ev) => this.setFilterParam('grade', parseInt(ev.target.value))}/>
+                                    <br/>
                                     <label>Grade weight:</label>
                                     <input type="number" name="weight" onChange={(ev) => this.setFilterParam('weight', parseInt(ev.target.value))}/>
+                                    <br/>
                                 </div>
                             )
                         case 'final grade':
                             return (
                                 <div>
-                                    <label>Grade value:</label>
-                                    <input type="number" name="grade" onChange={(ev) => this.setFilterParam('grade', parseInt(ev.target.value))}/>
-                                    <br/>
                                     <label>Course:</label>
                                     <input type="text" name="course" onChange={(ev) => this.setFilterParam('course', ev.target.value)}/>
+                                    <br/>
+                                    <label>Grade value:</label>
+                                    <input type="number" name="grade" onChange={(ev) => this.setFilterParam('grade', parseInt(ev.target.value))}/>
                                     <br/>
                                 </div>
                             )
@@ -155,22 +156,22 @@ export default class StudentTransactions extends Component {
                                     <label>Certifier:</label>
                                     <input type="text" name="certifier" onChange={(ev)   => this.setFilterParam('certifier', ev.target.value)}/>
                                     <br/>
-                                    <label>dateOfAward:</label>dateOfAward
-                                    <input type="date" name="course" onChange={(ev) => this.setFilterParam('dateOfAward', this.dateFormat(ev.target.value))}/>
-                                    <br/>
-                                    <label>Name of certificate:</label>
+                                    <label>Certificate name:</label>
                                     <input type="text" name="nameOfCertificate" onChange={(ev) => this.setFilterParam('nameOfCertificate', ev.target.value)}/>
+                                    <br/>
+                                    <label>Date award:</label>
+                                    <input type="date" name="course" onChange={(ev) => this.setFilterParam('dateOfAward', this.dateFormat(ev.target.value))}/>
                                     <br/>
                                 </div>
                             )
                         case 'presence':
                             return (
                                 <div>
-                                    <label>Presence value:</label>
-                                    <input type="text" name="presence" onChange={(ev)   => this.setFilterParam('presence', parseInt(ev.target.value))}/>
-                                    <br/>
                                     <label>Course:</label>
                                     <input type="text" name="course" onChange={(ev) => this.setFilterParam('course', ev.target.value)}/>
+                                    <br/>
+                                    <label>Presence value:</label>
+                                    <input type="text" name="presence" onChange={(ev)   => this.setFilterParam('presence', parseInt(ev.target.value))}/>
                                     <br/>
                                     <label>Date class:</label>
                                     <input type="date" name="dateClass" onChange={(ev) => this.setFilterParam('dateClass', this.dateFormat(ev.target.value))}/>
@@ -205,17 +206,16 @@ export default class StudentTransactions extends Component {
 
     render() {
         return (
-            <div className="container">
+            <div className="flex-container">
                 <div className="transaction-types">
                     {this.transactionTypes()}
                 </div>
                 <div>
-                    <label>Student's id:</label>
+                    <label>Student ID:</label>
                     <input type="text" name="studentId" value={this.state.studentId} onChange={ev => this.setState({studentId: ev.target.value})}/>
                     <br/>
-                    <label>Student's key:</label>
+                    <label>Student key:</label>
                     <input type="text" name="keyDecryptString" value={this.state.keyDecryptString} onChange={ev => this.setState({keyDecryptString: ev.target.value})}/>
-                    <br/>
                 </div>
                 <div id="filterMore">
                     {this.filter()}
