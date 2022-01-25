@@ -169,7 +169,7 @@ app.post("/find-transactions-student", (req, res) => {
         var finder = new StudentTransactionFinder(id, keyDecryptString, iterator, filter);
     } catch (e) {
         //lapiemy niepoprawny klucz
-        res.status(400).json("Wrong keystring " + e);
+        res.status(400).json("Wrong keystring ");
         return;
     }
 
