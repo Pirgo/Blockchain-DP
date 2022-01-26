@@ -39,7 +39,7 @@ const blockchain = new Blockchain();
 const transactionPool = new TransactionPool(blockchain.getGenesis());
 const p2pserver = new P2pServer(blockchain, transactionPool);
 //p2pserver.listen(); // starts the p2pserver
-
+process.on("SIGINT", ()=>{p2pserver.unregister()})
 const miner = new Miner(blockchain, transactionPool, p2pserver);
 
 //EXPOSED APIs

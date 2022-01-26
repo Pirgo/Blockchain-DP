@@ -1,5 +1,5 @@
 const PORT = 5001;
-const HOST = "172.104.240.26";
+const HOST = "172.104.240.26";  //"192.168.100.52"//
 const TIME = 120 //2 minuty
 var dgram = require('dgram');
 const { parse } = require('querystring');
@@ -22,7 +22,8 @@ function timeoutHandler() {
     deadList.forEach(element => {
         stunTable.delete(element)
     });
-    notify()
+    if (deadList.length > 0)
+        notify()
 
 }
 function send(msg, addr, port) {
@@ -74,7 +75,7 @@ server.on('message', function (message, remote) {
                 let peer = stunTable.get(pair)
                 peer.ttl = TIME
             } catch (e) {
-                stunTable.set(pair, { addr: remote.address, port: remote.port, ttl: TIE }) //jeśli peer odnawia uczestnictwo, ale serwer go usunął. doda go na nowo
+                stunTable.set(pair, { addr: remote.address, port: remote.port, ttl: TIME }) //jeśli peer odnawia uczestnictwo, ale serwer go usunął. doda go na nowo
                 notify()
             }
             break;
@@ -84,6 +85,10 @@ server.on('message', function (message, remote) {
             break
         case "none":    //garbage do robienia dziury NAT
             break
+        case "unregister":  //wypisanie z sieci
+            stunTable.delete(pair)
+            notify()
+            break;
         default:
             console.warn("unrecognized message type")
             break;

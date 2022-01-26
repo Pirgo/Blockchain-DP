@@ -2,15 +2,18 @@
 import("../blockchain/blockchain.js")
 const dgram = require('dgram');
 const TransactionBuilder = require('../blockchain/transactions/builders/transactionBuilder');
+const ConflictSolver = require("./confilctSolver")
+const Sender = require("./sender")
 const Blockchain = require('../blockchain/blockchain');
 const { throws } = require("assert");
 //declare the peer to peer server port 
 
-const P2P_PORT = process.env.P2P_PORT || 5001;   
+const P2P_PORT = process.env.P2P_PORT || 5001;
 
-const STUN_ADDR = '172.104.240.26'
+const STUN_ADDR = '172.104.240.26'    //"192.168.100.52"
 const STUN_PORT = 5001
 const KEEP_ALIVE_INTERVAL = 30000
+const COLLISION = 5000  //czas mniejszy od czasu kopania, ale większy od czasu propagacji
 //list of address to connect to
 //const peers = process.env.PEERS ? process.env.PEERS.split(',') : [];
 const server = dgram.createSocket('udp4');
@@ -21,15 +24,21 @@ const MESSAGE_TYPE = {
     clear_transactions: 'CLEAR_TRANSACTIONS',   //deprecated
     new_block: 'NEW_BLOCK',  //nowy blok 
     ask: 'ASK',  //pytanie o blockchain
-    table: 'table'   //tabela z adresami i portami peerów //todo uppercase na serwerze
+    table: 'table',   //tabela z adresami i portami peerów //todo uppercase na serwerze
+    register:'register', //rejestracja na serwerze
+    alive:'alive',   //przedłużenie połączenia
+    unregister:'unregister' //wyrejestrowanie z serwera
 
 }
 
 class P2pserver {
     constructor(blockchain, transactionPool) {
+        this.peers = [];
+        this.conflictSolver = new ConflictSolver(this.blockchain, this.peers)
+        this.sender = new Sender(server,this.peers)
         this.blockchain = blockchain;
         this.transactionPool = transactionPool;
-        this.peers = [];
+
         this.ip = Object.values(require('os').networkInterfaces()).reduce((r, list) => r.concat(list.reduce((rr, i) => rr.concat(i.family === 'IPv4' && !i.internal && i.address || []), [])), [])[0]
         server.bind();  //TODO - jak nie działa, zmienić na server.bind(P2P_PORT,this.ip)
         server.on('listening', function () {
@@ -37,52 +46,17 @@ class P2pserver {
             console.log('UDP Server listening on ' + address.address + ':' + address.port);
         });
         this.messageHandler()
-        this.send({ "type": "register" }, STUN_ADDR, STUN_PORT)
+        this.sender.send({ "type": MESSAGE_TYPE.register }, STUN_ADDR, STUN_PORT)
         setInterval(() => {
-            this.send({ "type": "alive" }, STUN_ADDR, STUN_PORT)    //informowanie o aktywności/uczestnictwie
+            this.sender.send({ "type": MESSAGE_TYPE.alive }, STUN_ADDR, STUN_PORT)    //informowanie o aktywności/uczestnictwie
             //console.log("im alive")
         }, KEEP_ALIVE_INTERVAL);
 
     }
-    conflictSolver = {
-        //peers:this.peers,
-        ready: false,    //peer nie bierze udziału w sieci dopóki nie będzie miał chaina
-        reset: () => {
-            this.conflictSolver.candidates = []
-            this.conflictSolver.counts = []
-        },
-        append: (chain) => {
-            let index = this.conflictSolver.candidates.indexOf(chain)
-            if (index == -1) {      //jeśli takiego blockchainu jeszcze nie dostałem...
-                this.conflictSolver.candidates.push(chain)     //dodaję do kandydatów
-                this.conflictSolver.counts.push(1)
-            } else {
-                this.conflictSolver.counts[index]++    //wpp zapamiętuję że jest to kolejny
-            }
-            let topCount = this.conflictSolver.counts.reduce((prev, curr) => { return max(prev, curr) })   //liczę ile peerów ma najpopularniejszy blockchain
-            if (topCount >= Math.ceil(this.peers.length / 2)) {    //jeśli dany blockchain ma więcej niż połowa peerów...
-                this.blockchain.replaceChain(this.conflictSolver.candidates[this.conflictSolver.counts.indexOf(topCount)])    //...nadpisuję swój blockchain tym, ktrego ma najwięcej peerów
-                this.conflictSolver.ready = true
-                this.conflictSolver.reset()
-            }
 
-        },
-        candidates: [],   //unikalne chainy nadesłane przez peery
-        counts: []   //liczby odpowiednich blockchainów w sieci
-    }
     // create a new p2p server and connections
-    multicast(msg) {
-        this.peers.forEach(peer => {
-            this.send(msg, peer.addr, peer.port)
-        });
-    }
-    send(msg, addr, port) {
-        let msgStr = JSON.stringify(msg)
-        server.send(msgStr, 0, msgStr.length, port, addr, function (err, bytes) {
-            if (err) throw err;
-            //console.log(msg.type + ' message sent to ' + addr + ':' + port);
-        });
-    }
+
+
     listen() {
         // create the p2p server with port as argument
 
@@ -126,21 +100,23 @@ class P2pserver {
         //on recieving a message execute a callback function
         server.on('message', (message, remote) => {
             const data = JSON.parse(message);
-            //console.log(data)
+            console.log(data)
             switch (data.type) {
                 case MESSAGE_TYPE.chain:
                     if (!this.conflictSolver.ready)
-                        this.conflictSolver.append(data.chain)  
+                        this.conflictSolver.append(data.chain)
                     break;
                 case MESSAGE_TYPE.transaction:
                     //console.log("transaction..." + this.conflictSolver.ready)
                     if (this.conflictSolver.ready) {
                         //todo - weryfikacja
-                        //console.log("adding transaction")
+                        console.log("adding transaction")
                         const builder = new TransactionBuilder();
                         builder.buildFromJSON(data.transaction);
                         const transaction = builder.getResult();
                         this.transactionPool.add(transaction);
+                    }else{
+
                     }
                     break;
                 case MESSAGE_TYPE.clear_transactions:
@@ -148,33 +124,31 @@ class P2pserver {
                     // this.transactionPool.clear();
                     break;
                 case MESSAGE_TYPE.ask:
-                    this.send({ type: MESSAGE_TYPE.chain, chain: this.blockchain }, remote.address, remote.port)
+                    this.sender.send({ type: MESSAGE_TYPE.chain, chain: this.blockchain ,pool:history.transactionPool}, remote.address, remote.port)
                     break;
                 case MESSAGE_TYPE.table:
                     this.peers = data.table
                     //console.log(this.peers)
-                    this.multicast({ "type": "none" })  //garbage do zrobienia dziury NAT
+                    this.sender.garbage()
                     if (this.peers.length == 0) {
                         this.conflictSolver.ready = true
                     }
                     if (!this.conflictSolver.ready) {
                         this.conflictSolver.reset()
                         this.conflictSolver.ready = false
-                        this.multicast({
-                            type: MESSAGE_TYPE.ask
-                        })
+                        this.sender.ask()
                     }
                     break;
                 case MESSAGE_TYPE.new_block:
                     if (this.conflictSolver.ready) {
                         let last = this.blockchain.chain[this.blockchain.chain.length - 1]
                         if (last.hash != data.block.hash) {
-                            if (last.hash == data.block.lastHash){
-                                //console.log("adding a block")
+                            if (last.hash == data.block.lastHash) {
+                                console.log("adding a block")
                                 this.blockchain.chain.push(data.block)
                                 this.transactionPool.clear()
                             }   //todo - to chyba powinno być gdzieś indziej
-                            else{
+                            else {
                                 //console.log("new block not compatible")
                             }
 
@@ -182,6 +156,14 @@ class P2pserver {
                         } else {
                             //console.log("block already known")
                         }   //blok nie zostanie dodany jeśli jest identyczny z ostatnim // todo policzyć hash na nowo?
+                    } else {
+                        this.conflictSolver.ready = false //nowy blok w trakcie odpytywania o blockchain
+                        this.conflictSolver.reset();
+                        setTimeout(() => {      //czekam aż peery dodają blok
+                            this.conflictSolver.ready = false
+                            this.conflictSolver.reset();
+                            this.sender.ask()       //i próbuję jeszcze raz
+                        }, COLLISION);  
                     }
 
 
@@ -190,14 +172,14 @@ class P2pserver {
         });
     }
     broadcastBlock(block) {
-        this.multicast({
+        this.sender.multicast({
             type: MESSAGE_TYPE.new_block,
             block: block
         })
     }
 
     sendChain() {
-        this.multicast({
+        this.sender.multicast({
             type: MESSAGE_TYPE.chain,
             chain: this.blockchain.chain
         });
@@ -209,9 +191,12 @@ class P2pserver {
 
     broadcastTransaction(transaction) {
         //console.log("brodadcasting transaction")
-        this.multicast({ "type": MESSAGE_TYPE.transaction, "transaction": transaction })
+        this.sender.multicast({ "type": MESSAGE_TYPE.transaction, "transaction": transaction })
     }
-
+    unregister(){
+        console.log("unregistering...")
+        this.sender.send({ "type": MESSAGE_TYPE.unregister }, STUN_ADDR, STUN_PORT)
+    }
 
     // sendTransaction(socket, transaction) {
     //     socket.send(JSON.stringify({
@@ -223,7 +208,7 @@ class P2pserver {
 
     broadcastClearTransactions() {
 
-        this.multicast({ type: MESSAGE_TYPE.clear_transactions })
+        this.sender.multicast({ type: MESSAGE_TYPE.clear_transactions })
 
     }
 }
