@@ -153,7 +153,7 @@ export default class AddTransaction extends Component {
     response() {
         if (this.state.addedSuccesfully === "true")
             return (
-                <div><h1>Transaction added succesfully</h1></div>
+                <div><h3 style = {{color : "lightgreen"}}>Transaction added succesfully</h3></div>
             )
         else if (this.state.addedSuccesfully === "false")
             return (
@@ -161,7 +161,7 @@ export default class AddTransaction extends Component {
             )
         else
             return (
-                <div><h1>Transaction not added: {this.state.addedSuccesfully}</h1></div>
+                <div><h3 style = {{color : "#d92c2cbf"}}>Transaction not added successfully: {this.state.addedSuccesfully}</h3></div>
             )
     }
 

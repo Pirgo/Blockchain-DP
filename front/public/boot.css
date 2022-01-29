@@ -63,6 +63,7 @@ display: inline-block;
   margin-block: 20px;
   margin-left: 50px;
   background-color:rgb(43, 42, 42);
+  border-style: double;
   border-radius: 5px;
 }
 
@@ -179,6 +180,19 @@ display: inline-block;
   padding-right: 25px;
 }
 
+.courses-container h2{
+  width: 220;
+  color :antiquewhite;
+}
+
+.flex-container h3{
+  margin-top: 20px;
+  margin-bottom: 0.5rem;
+  margin-left: 65px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: lightgreen;
+}
 .transaction-types {
   display: inline-block;
   clear: both;
