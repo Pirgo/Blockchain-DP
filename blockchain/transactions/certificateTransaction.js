@@ -16,7 +16,10 @@ class CertificateTransaction extends Transaction{
     }
 
     checkTransaction(){
-        
+        if(this.certifier == undefined) throw new Error('Cerifier empty');
+        if(this.dateOfAward == undefined) throw new Error('Date of award empty');
+        if(this.info == undefined) throw new Error('Info empty');
+        if(this.nameOfCertificate == undefined) throw new Error("name of cerificate empty");
     }
 }
 

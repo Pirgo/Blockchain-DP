@@ -28,7 +28,7 @@ class ConflictSolver {
         } else {
             this.counts[index]++    //wpp zapamiętuję że jest to kolejny
         }
-        let topCount = this.counts.reduce((prev, curr) => { return max(prev, curr) })   //liczę ile peerów ma najpopularniejszy blockchain
+        let topCount = this.counts.reduce((prev, curr) => { return Math.max(prev, curr) })   //liczę ile peerów ma najpopularniejszy blockchain
         if (topCount >= Math.ceil(this.peers.length / 2)) {    //jeśli dany blockchain ma więcej niż połowa peerów...
             this.blockchain.replaceChain(this.candidates[this.counts.indexOf(topCount)])    //...nadpisuję swój blockchain tym, ktrego ma najwięcej peerów
             for (let i = 0; i < transactionPool.transactions.length; i++) {
