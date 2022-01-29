@@ -39,7 +39,7 @@ const blockchain = new Blockchain();
 const transactionPool = new TransactionPool(blockchain.getGenesis());
 const p2pserver = new P2pServer(blockchain, transactionPool);
 //p2pserver.listen(); // starts the p2pserver
-
+process.on("SIGINT", ()=>{p2pserver.unregister()})
 const miner = new Miner(blockchain, transactionPool, p2pserver);
 
 //EXPOSED APIs
@@ -169,7 +169,7 @@ app.post("/find-transactions-student", (req, res) => {
         var finder = new StudentTransactionFinder(id, keyDecryptString, iterator, filter);
     } catch (e) {
         //lapiemy niepoprawny klucz
-        res.status(400).json("Wrong keystring " + e);
+        res.status(400).json("Wrong keystring ");
         return;
     }
 

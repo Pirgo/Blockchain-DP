@@ -1,3 +1,6 @@
+/*
+Używane do testowania serwera stun
+*/
 var REMOTEPORT = 5001
 var PORT = 5003;
 var HOST = '192.168.100.52';
