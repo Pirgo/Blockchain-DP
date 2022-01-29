@@ -57,7 +57,7 @@ class Blockchain {
 
     //TODO: rozwiązać problem kiedy otrzymujemy chainy od dwoch nodeów jednocześnie
     replaceChain(newChain) {
-        console.log(newChain);
+        // console.log(newChain);
         //: tu wyodrębnic czy otrzymujemy dluzzszy chain czy taki sam - w p2p-server
         // if (newChain.length <= this.chain.length) {
         //     console.log("Recieved chain is not longer than the current chain");
@@ -67,7 +67,7 @@ class Blockchain {
         //     return;
         // }
 
-        console.log("Replacing the current chain with new chain");
+        // console.log("Replacing the current chain with new chain");
         this.chain = newChain.chain;
     }
 
