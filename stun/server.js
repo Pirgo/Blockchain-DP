@@ -1,5 +1,6 @@
 const PORT = 5001;
-const HOST = "172.104.240.26";  //"192.168.100.52"//
+const HOST = "172.104.240.26";  //
+//const HOST = "192.168.100.52"//
 const TIME = 120 //2 minuty
 var dgram = require('dgram');
 const { parse } = require('querystring');

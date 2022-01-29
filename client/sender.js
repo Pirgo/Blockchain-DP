@@ -1,10 +1,11 @@
 class Sender {
+    peers
     constructor(server, peers) {
         this.server = server
         this.peers = peers
     }
     send = function (msg, addr, port) {
-        console.log("sending message to "+addr)
+        console.log("sending message to " + addr + ":" + port)
         let msgStr = JSON.stringify(msg)
         this.server.send(msgStr, 0, msgStr.length, port, addr, function (err, bytes) {
             if (err) throw err;

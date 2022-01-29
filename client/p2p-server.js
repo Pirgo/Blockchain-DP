@@ -10,7 +10,8 @@ const { throws } = require("assert");
 
 const P2P_PORT = process.env.P2P_PORT || 5001;
 
-const STUN_ADDR = '172.104.240.26'    //"192.168.100.52"
+//const STUN_ADDR = "192.168.100.52"
+const STUN_ADDR = '172.104.240.26' 
 const STUN_PORT = 5001
 const KEEP_ALIVE_INTERVAL = 30000
 const COLLISION = 5000  //czas mniejszy od czasu kopania, ale większy od czasu propagacji
@@ -25,22 +26,23 @@ const MESSAGE_TYPE = {
     new_block: 'NEW_BLOCK',  //nowy blok 
     ask: 'ASK',  //pytanie o blockchain
     table: 'table',   //tabela z adresami i portami peerów //todo uppercase na serwerze
-    register:'register', //rejestracja na serwerze
-    alive:'alive',   //przedłużenie połączenia
-    unregister:'unregister' //wyrejestrowanie z serwera
+    register: 'register', //rejestracja na serwerze
+    alive: 'alive',   //przedłużenie połączenia
+    unregister: 'unregister' //wyrejestrowanie z serwera
 
 }
 
 class P2pserver {
     constructor(blockchain, transactionPool) {
-        this.peers = [];
-        this.conflictSolver = new ConflictSolver(this.blockchain, this.peers)
-        this.sender = new Sender(server,this.peers)
-        this.blockchain = blockchain;
+        this.peers = new Array();
         this.transactionPool = transactionPool;
+        this.blockchain = blockchain;
+
+        this.conflictSolver = new ConflictSolver(this.blockchain, this.peers, this.transactionPool)
+        this.sender = new Sender(server, this.peers)
 
         this.ip = Object.values(require('os').networkInterfaces()).reduce((r, list) => r.concat(list.reduce((rr, i) => rr.concat(i.family === 'IPv4' && !i.internal && i.address || []), [])), [])[0]
-        server.bind();  //TODO - jak nie działa, zmienić na server.bind(P2P_PORT,this.ip)
+        server.bind(P2P_PORT, this.ip);  //jak nie działa, zmienić na server.bind(P2P_PORT,this.ip)
         server.on('listening', function () {
             var address = server.address();
             console.log('UDP Server listening on ' + address.address + ':' + address.port);
@@ -51,63 +53,40 @@ class P2pserver {
             this.sender.send({ "type": MESSAGE_TYPE.alive }, STUN_ADDR, STUN_PORT)    //informowanie o aktywności/uczestnictwie
             //console.log("im alive")
         }, KEEP_ALIVE_INTERVAL);
-
+        setTimeout(() => {  //dołączenie do sieci; opóźnienie po to aby dostać tablicę peerów
+            this.join()
+        }, 1000);
     }
-
-    // create a new p2p server and connections
-
-
-    listen() {
-        // create the p2p server with port as argument
-
-        // event listener and a callback function for any new connection
-        // on any new connection the current instance will send the current chain
-        // to the newly connected peer
-        //server.on('connection',socket => this.connectSocket(socket));
-
-        // to connect to the peers that we have specified
-
+    join() {    //procedura dołączania do sieci
+        this.conflictSolver.ready = false
+        this.conflictSolver.reset();
+        this.sender.ask()
     }
-
-    // after making connection to a socket
-    // connectSocket(socket) {
-
-    //     // push the socket too the socket array
-    //     this.sockets.push(socket);
-    //     console.log("Socket connected");
-    //     this.messageHandler(socket);
-    //     //TODO: zeby 50% akceptowalo zmiane
-    //     this.sendChain(socket);
-
-    // }
-
-    // connectToPeers() {
-
-    //     //connect to each peer
-    //     peers.forEach(peer => {
-
-    //         // create a socket for each peer
-    //         const socket = new WebSocket(peer);
-
-    //         // open event listner is emitted when a connection is established
-    //         // saving the socket in the array
-    //         socket.on('open', () => this.connectSocket(socket));
-
-    //     });
-    // }
-
+    collide() {  //procedura kolizji - bezpieczne rozwiązanie to poczekanie chwili i próba dołączenia do sieci od nowa
+        console.log("collision - will retry in " + (COLLISION / 1000.0) + " seconds")
+        this.conflictSolver.ready = false
+        this.conflictSolver.reset();
+        setTimeout(() => {
+            console.log("retrying to join network...")
+            this.conflictSolver.ready = false
+            this.conflictSolver.reset();
+            this.sender.ask()
+        }, COLLISION);
+    }
     messageHandler() {
-        //on recieving a message execute a callback function
         server.on('message', (message, remote) => {
             const data = JSON.parse(message);
+            console.log("message from:" + remote.address + ":" + remote.port)
             console.log(data)
             switch (data.type) {
                 case MESSAGE_TYPE.chain:
                     if (!this.conflictSolver.ready)
-                        this.conflictSolver.append(data.chain)
+                        if (Blockchain.isValidChain(data.chain.chain)) // czy otrzymany chain jest poprawny ?   //TODO nwm czemu nie działa
+                            this.conflictSolver.append(data.chain, data.pool)          //biorę go pod uwagę w wyborze najpopularniejszego
+                        else
+                            console.log("response with invalid chain - ignored")
                     break;
                 case MESSAGE_TYPE.transaction:
-                    //console.log("transaction..." + this.conflictSolver.ready)
                     if (this.conflictSolver.ready) {
                         //todo - weryfikacja
                         console.log("adding transaction")
@@ -115,8 +94,8 @@ class P2pserver {
                         builder.buildFromJSON(data.transaction);
                         const transaction = builder.getResult();
                         this.transactionPool.add(transaction);
-                    }else{
-
+                    } else {
+                        this.collide()
                     }
                     break;
                 case MESSAGE_TYPE.clear_transactions:
@@ -124,20 +103,34 @@ class P2pserver {
                     // this.transactionPool.clear();
                     break;
                 case MESSAGE_TYPE.ask:
-                    this.sender.send({ type: MESSAGE_TYPE.chain, chain: this.blockchain ,pool:history.transactionPool}, remote.address, remote.port)
+                    console.log("responding with current blockchain")
+                    let msg = { type: MESSAGE_TYPE.chain, chain: this.blockchain, pool: this.transactionPool }
+                    let msgStr = JSON.stringify(msg)
+                    server.send(msgStr, 0, msgStr.length, remote.port, remote.address, function (err, bytes) {
+                        if (err) throw err;
+                    });
+                    // this.sender.answer(remote.address,remote.port)
+                    // this.sender.send({ type: MESSAGE_TYPE.chain, chain: this.blockchain, pool: this.transactionPool }, remote.address, remote.port)
                     break;
                 case MESSAGE_TYPE.table:
-                    this.peers = data.table
-                    //console.log(this.peers)
-                    this.sender.garbage()
-                    if (this.peers.length == 0) {
+                    if (data.table.length == 0) {   //jedyny peer w sieci
+                        console.log("last peer in the network")
                         this.conflictSolver.ready = true
                     }
                     if (!this.conflictSolver.ready) {
-                        this.conflictSolver.reset()
-                        this.conflictSolver.ready = false
-                        this.sender.ask()
+                        if (this.peers.length > data.table.length) {
+                            this.collide()
+                        }
+                        //^ jeśli w trakcie odpytywania o chain, ktoś się rozłączy to odpytuję jeszcze raz
+
                     }
+                    this.peers = data.table
+                    this.conflictSolver.peers = data.table
+                    this.sender.peers = data.table      //zapisanie peerów
+                    this.sender.garbage()   //wybijanie dziury NAT
+                    console.log("updated peer table:")
+                    console.log(this.peers)
+
                     break;
                 case MESSAGE_TYPE.new_block:
                     if (this.conflictSolver.ready) {
@@ -149,21 +142,15 @@ class P2pserver {
                                 this.transactionPool.clear()
                             }   //todo - to chyba powinno być gdzieś indziej
                             else {
-                                //console.log("new block not compatible")
+                                console.log("new block not compatible")
                             }
 
 
                         } else {
-                            //console.log("block already known")
+                            console.log("block already known")
                         }   //blok nie zostanie dodany jeśli jest identyczny z ostatnim // todo policzyć hash na nowo?
                     } else {
-                        this.conflictSolver.ready = false //nowy blok w trakcie odpytywania o blockchain
-                        this.conflictSolver.reset();
-                        setTimeout(() => {      //czekam aż peery dodają blok
-                            this.conflictSolver.ready = false
-                            this.conflictSolver.reset();
-                            this.sender.ask()       //i próbuję jeszcze raz
-                        }, COLLISION);  
+                        this.collide()
                     }
 
 
@@ -190,10 +177,10 @@ class P2pserver {
     }
 
     broadcastTransaction(transaction) {
-        //console.log("brodadcasting transaction")
+        console.log("brodadcasting transaction")
         this.sender.multicast({ "type": MESSAGE_TYPE.transaction, "transaction": transaction })
     }
-    unregister(){
+    unregister() {
         console.log("unregistering...")
         this.sender.send({ "type": MESSAGE_TYPE.unregister }, STUN_ADDR, STUN_PORT)
     }
