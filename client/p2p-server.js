@@ -158,6 +158,7 @@ class P2pserver {
                                     const transaction = builder.getResult();
                                     if( ! transaction.checkVerification(this.blockchain.getGenesis())){
                                         console.log("Wrong block");
+                                        this.transactionPool.clear();
                                         return;
                                     }
 
