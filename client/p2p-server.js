@@ -93,13 +93,9 @@ class P2pserver {
                         const builder = new TransactionBuilder();
                         builder.buildFromJSON(data.transaction);
                         const transaction = builder.getResult();
-                        if(transaction.checkVerification(this.blockchain.getGenesis())){
-                            this.transactionPool.add(transaction);
-                        }
-                        else{
-                            console.log("wrong transaction")
-                        }
-                        
+                        if(! this.transactionPool.add(transaction)){
+                            console.log("Wrong transaction")
+                        };
                     } else {
                         this.collide()
                     }
@@ -158,7 +154,6 @@ class P2pserver {
                                     const transaction = builder.getResult();
                                     if( ! transaction.checkVerification(this.blockchain.getGenesis())){
                                         console.log("Wrong block");
-                                        this.transactionPool.clear();
                                         return;
                                     }
 

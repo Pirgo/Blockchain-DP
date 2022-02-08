@@ -1,4 +1,8 @@
 const TransactionBuilder = require("../blockchain/transactions/builders/transactionBuilder")
+const PresenceTransactionBuilder = require("../blockchain/transactions/builders/presenceTransactionBuilder");
+const CertificateTransactionBuilder = require("../blockchain/transactions/builders/certificateTransactionBuilder");
+const PartialGradeTransactionBuilder = require("../blockchain/transactions/builders/partialGradeTransactionBuilder");
+const FinalGradeTransactionBuilder = require("../blockchain/transactions/builders/finalGradeTransactionBuilder");
 
 class ConflictSolver {
     peers
@@ -38,7 +42,31 @@ class ConflictSolver {
             this.blockchain.replaceChain(this.candidates[this.counts.indexOf(topCount)])    //...nadpisuję swój blockchain tym, ktrego ma najwięcej peerów
             for (let i = 0; i < transactionPool.transactions.length; i++) {
                 const element = transactionPool.transactions[i];
-                this.pool.add(element)
+                let builder;
+                switch(element.type){
+                    case TypeEnum.certificate: {
+                        builder = new CertificateTransactionBuilder();
+                        break;
+                    }
+                    case TypeEnum.presence: {
+                        builder = new PresenceTransactionBuilder();
+                        break;
+                    }
+                    case TypeEnum.partialGrade: {
+                        builder = new PartialGradeTransactionBuilder();
+                        break;
+                    }
+                    case TypeEnum.finalGrade: {
+                        builder = new FinalGradeTransactionBuilder();
+                        break;
+                    }
+                    default:
+                        res.status(400).json("Wrong transaction type");
+                        return;
+                }
+                builder.buildFromJSON(element)
+                const transaction = builder.getResult();
+                this.pool.add(transaction)
             }
             this.ready = true
 
