@@ -4,6 +4,8 @@ const CertificateTransactionBuilder = require("../blockchain/transactions/builde
 const PartialGradeTransactionBuilder = require("../blockchain/transactions/builders/partialGradeTransactionBuilder");
 const FinalGradeTransactionBuilder = require("../blockchain/transactions/builders/finalGradeTransactionBuilder");
 
+const { TypeEnum } = require("../blockchain/transactions/transactionEnums");
+
 class ConflictSolver {
     peers
     ready
