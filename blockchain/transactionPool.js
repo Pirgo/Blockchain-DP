@@ -15,6 +15,10 @@ class TransactionPool {
     return false;
   }
 
+  addHack(transaction){
+    this.transactions.push(transaction);
+  }
+
   clear() {
     this.transactions = [];
   }

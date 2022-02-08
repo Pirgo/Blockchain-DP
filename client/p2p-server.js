@@ -93,7 +93,9 @@ class P2pserver {
                         const builder = new TransactionBuilder();
                         builder.buildFromJSON(data.transaction);
                         const transaction = builder.getResult();
-                        this.transactionPool.add(transaction);
+                        if(! this.transactionPool.add(transaction)){
+                            console.log("Wrong transaction")
+                        };
                     } else {
                         this.collide()
                     }
@@ -137,6 +139,25 @@ class P2pserver {
                         let last = this.blockchain.chain[this.blockchain.chain.length - 1]
                         if (last.hash != data.block.hash) {
                             if (last.hash == data.block.lastHash) {
+                                for(const t of data.block.data){
+                                    const json = {
+                                        id: t.id,
+                                        type: t.type,
+                                        date: t.date,
+                                        signature: t.signature,
+                                        masterSignature: t.masterSignature,
+                                        lecturerID: t.lecturerID,
+                                        verification: t.verification
+                                    }
+                                    const builder = new TransactionBuilder();
+                                    builder.buildFromJSON(json);
+                                    const transaction = builder.getResult();
+                                    if( ! transaction.checkVerification(this.blockchain.getGenesis())){
+                                        console.log("Wrong transaction");
+                                        return;
+                                    }
+
+                                }
                                 console.log("adding a block")
                                 this.blockchain.chain.push(data.block)
                                 this.transactionPool.clear()

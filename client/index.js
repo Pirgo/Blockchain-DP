@@ -212,6 +212,99 @@ app.post("/find-transactions-lecturer", (req, res) => {
     res.json(resArr);
 });
 
+app.post('/transact-hack', (req, res) => {
+    const {
+        date,
+        studentID,
+        masterKeyString,
+        lecturerID,
+        verificationKeyString,
+        type,
+    } = req.body;
+    try {
+        var masterSignatureKey = ChainUtil.createPrivateKey(
+            "Lecturer",
+            '2',
+            masterKeyString
+        );
+    } catch (e) {
+        res.status(400).json("Wrong masterKeyString " + e);
+        return;
+    }
+
+    try {
+        var verificationKey = ChainUtil.createPrivateKey(
+            "Lecturer",
+            '2',
+            verificationKeyString
+        );
+    } catch (e) {
+        res.status(400).json("Wrong verifivationKeyString " + e);
+        return;
+    }
+
+    const signatureKey = ChainUtil.createPublicKey(
+        ChainUtil.getSignatureKey(blockchain.getGenesis(), studentID)
+    );
+    const signature = ChainUtil.encryptPublic(signatureKey, studentID.toString());
+    const masterSignature = ChainUtil.encryptPrivate(
+        masterSignatureKey,
+        studentID.toString()
+    );
+    const verification = ChainUtil.encryptPrivate(
+        verificationKey,
+        ChainUtil.getVerificationString()
+    );
+    let builder;
+    switch (type) {
+        case TypeEnum.certificate: {
+            const { certifier, dateOfAward, info, nameOfCertificate } = req.body;
+            builder = new CertificateTransactionBuilder();
+            builder.setCertifier(certifier);
+            builder.setDateOfAward(dateOfAward);
+            builder.setInfo(info);
+            builder.setNameOfCertificate(nameOfCertificate);
+            break;
+        }
+        case TypeEnum.presence: {
+            const { presence, course, dateClass } = req.body;
+            builder = new PresenceTransactionBuilder();
+            builder.setPresence(presence);
+            builder.setCourse(course);
+            builder.setDateClass(dateClass);
+            break;
+        }
+        case TypeEnum.partialGrade: {
+            const { course, grade, weight } = req.body;
+            builder = new PartialGradeTransactionBuilder();
+            builder.setCourse(course);
+            builder.setGrade(grade);
+            builder.setWeight(weight);
+            break;
+        }
+        case TypeEnum.finalGrade: {
+            const { course, grade } = req.body;
+            builder = new FinalGradeTransactionBuilder();
+            builder.setCourse(course);
+            builder.setGrade(grade);
+            break;
+        }
+        default:
+            res.status(400).json("Wrong transaction type");
+            return;
+    }
+    builder.setID(ChainUtil.id());
+    builder.setDate(date);
+    builder.setSignature(signature);
+    builder.setMasterSignature(masterSignature);
+    builder.setLecturerID(lecturerID);
+    builder.setVerification(verification);
+    const transaction = builder.getResult();
+    transactionPool.addHack(transaction);
+    p2pserver.broadcastTransaction(transaction);
+    res.redirect("/transactions");
+})
+
 //dodaje transakcje do poola
 app.post("/transact", (req, res) => {
     const {
