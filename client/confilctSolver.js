@@ -1,3 +1,4 @@
+const TransactionBuilder = require("../blockchain/transactions/builders/transactionBuilder")
 
 class ConflictSolver {
     peers

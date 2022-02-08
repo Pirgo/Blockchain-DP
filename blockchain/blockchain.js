@@ -15,7 +15,6 @@ class Blockchain {
             if ((block.lastHash !== lastBlock.hash) || (block.hash !== Block.blockHash(block)))
                 return false;
         }
-
         return true;
     }
 

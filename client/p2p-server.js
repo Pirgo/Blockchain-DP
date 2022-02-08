@@ -13,7 +13,7 @@ const P2P_PORT = process.env.P2P_PORT || 5001;
 //const STUN_ADDR = "192.168.100.52"
 const STUN_ADDR = '172.104.240.26' 
 const STUN_PORT = 5001
-const KEEP_ALIVE_INTERVAL = 30000
+const KEEP_ALIVE_INTERVAL = 10000
 const COLLISION = 5000  //czas mniejszy od czasu kopania, ale większy od czasu propagacji
 //list of address to connect to
 //const peers = process.env.PEERS ? process.env.PEERS.split(',') : [];
@@ -93,9 +93,13 @@ class P2pserver {
                         const builder = new TransactionBuilder();
                         builder.buildFromJSON(data.transaction);
                         const transaction = builder.getResult();
-                        if(! this.transactionPool.add(transaction)){
-                            console.log("Wrong transaction")
-                        };
+                        if(transaction.checkVerification(this.blockchain.getGenesis())){
+                            this.transactionPool.add(transaction);
+                        }
+                        else{
+                            console.log("wrong transaction")
+                        }
+                        
                     } else {
                         this.collide()
                     }
@@ -153,7 +157,7 @@ class P2pserver {
                                     builder.buildFromJSON(json);
                                     const transaction = builder.getResult();
                                     if( ! transaction.checkVerification(this.blockchain.getGenesis())){
-                                        console.log("Wrong transaction");
+                                        console.log("Wrong block");
                                         return;
                                     }
 
