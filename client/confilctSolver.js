@@ -63,7 +63,7 @@ class ConflictSolver {
                         break;
                     }
                     default:
-                        res.status(400).json("Wrong transaction type");
+                        console.log("Wrong transaction type");
                         return;
                 }
                 builder.buildFromJSON(element)
