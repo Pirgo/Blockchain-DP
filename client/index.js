@@ -63,6 +63,7 @@ app.get("/mine-transactions", (req, res) => {
 
 app.get("/clear-transaction", (req, res)=>{
     transactionPool.clear();
+    res.redirect('/transactions');
 })
 
 
