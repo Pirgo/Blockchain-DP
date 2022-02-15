@@ -6,6 +6,7 @@ const ConflictSolver = require("./confilctSolver")
 const Sender = require("./sender")
 const Blockchain = require('../blockchain/blockchain');
 const { throws } = require("assert");
+const { TypeEnum } = require("../blockchain/transactions/transactionEnums.js");
 //declare the peer to peer server port 
 
 const P2P_PORT = process.env.P2P_PORT || 5001;
@@ -89,7 +90,29 @@ class P2pserver {
                 case MESSAGE_TYPE.transaction:
                     if (this.conflictSolver.ready) {
                         console.log("adding transaction")
-                        const builder = new TransactionBuilder();
+                        let builder
+                        switch(data.transaction.type){
+                            case TypeEnum.certificate: {
+                                builder = new CertificateTransactionBuilder();
+                                break;
+                            }
+                            case TypeEnum.presence: {
+                                builder = new PresenceTransactionBuilder();
+                                break;
+                            }
+                            case TypeEnum.partialGrade: {
+                                builder = new PartialGradeTransactionBuilder();
+                                break;
+                            }
+                            case TypeEnum.finalGrade: {
+                                builder = new FinalGradeTransactionBuilder();
+                                break;
+                            }
+                            default:
+                                console.log("Wrong transaction type - P2P");
+                                return;
+                        }
+
                         builder.buildFromJSON(data.transaction);
                         const transaction = builder.getResult();
                         if(! this.transactionPool.add(transaction)){

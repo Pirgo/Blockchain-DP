@@ -52,6 +52,7 @@ class ConflictSolver {
             this.blockchain.replaceChain(this.candidates[this.counts.indexOf(topCount)])    //...nadpisuję swój blockchain tym, ktrego ma najwięcej peerów
             for (let i = 0; i < transactionPool.transactions.length; i++) {
                 const element = transactionPool.transactions[i];
+                console.log("ELEMENT: " + element.type)
                 let builder;
                 switch(element.type){
                     case TypeEnum.certificate: {
