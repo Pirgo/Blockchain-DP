@@ -24,6 +24,7 @@ class ConflictSolver {
     //peers:this.peers,
 
     reset = function () {
+        this.identifiers = []
         this.candidates = []
         this.counts = []
     }
@@ -34,6 +35,7 @@ class ConflictSolver {
         }, '')
         console.log("Identifier " + identifier);
         let index = this.identifiers.indexOf(identifier)
+        console.log("Index of identifier " + index)
         if (index == -1) {      //jeśli takiego blockchainu jeszcze nie dostałem...
             this.identifiers.push(identifier);
             this.candidates.push(chain)     //dodaję do kandydatów
