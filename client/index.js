@@ -54,43 +54,6 @@ app.get("/transactions", (req, res) => {
     res.json(transactionPool.transactions);
 });
 
-//api to view all certificates in chain
-// app.get('/transactions-certificate', (req, res) => {
-//     let certificateIterator = new BlockchainIterator(blockchain, TypeEnum.certificate);
-//     let tmp = new Array();
-//     for(t of certificateIterator){
-//         tmp.push(t);
-//     }
-//     res.json(tmp);
-// })
-
-// //
-// app.get('/transactions-presence', (req, res) => {
-//     let certificateIterator = new BlockchainIterator(blockchain, TypeEnum.presence);
-//     let tmp = new Array();
-//     for(t of certificateIterator){
-//         tmp.push(t);
-//     }
-//     res.json(tmp);
-// })
-
-// app.get('/transactions-finalGrade', (req, res) => {
-//     let certificateIterator = new BlockchainIterator(blockchain, TypeEnum.finalGrade);
-//     let tmp = new Array();
-//     for(t of certificateIterator){
-//         tmp.push(t);
-//     }
-//     res.json(tmp);
-// })
-
-// app.get('/transactions-partialGrade', (req, res) => {
-//     let certificateIterator = new BlockchainIterator(blockchain, TypeEnum.partialGrade);
-//     let tmp = new Array();
-//     for(t of certificateIterator){
-//         tmp.push(t);
-//     }
-//     res.json(tmp);
-// })
 
 app.get("/mine-transactions", (req, res) => {
     const block = miner.mine();
@@ -98,13 +61,6 @@ app.get("/mine-transactions", (req, res) => {
     res.redirect("/blocks");
 });
 
-//api to add blocks
-// app.post('/mine',(req,res)=>{
-//     const block = blockchain.addBlock(req.body.data);
-//     console.log(`New block added: ${block.toString()}`);
-//     p2pserver.syncChain();
-//     res.redirect('/blocks');
-// });
 
 //returns all lecturers id in genesis
 app.get("/lecturers", (req, res) => {
