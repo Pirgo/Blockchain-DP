@@ -30,6 +30,7 @@ class ConflictSolver {
     append = function (chain, transactionPool) {
         const identifier = chain.chain.reduce((acc, e) => {
             acc += e.hash;
+            return acc;
         }, '')
         console.log("Identifier " + identifier);
         let index = this.identifiers.indexOf(identifier)
