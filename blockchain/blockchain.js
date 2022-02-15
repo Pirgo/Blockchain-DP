@@ -23,31 +23,6 @@ class Blockchain {
     }
 
 
-    // getVerificationKey(id){
-    //     const genesis = this.getGenesis();
-    //     const lecturers = genesis.data.lecturers;
-    //     for(let i = 0; i < lecturers.length; i++){
-    //         if(lecturers[i].ID == id){
-    //             return lecturers[i].key
-    //         }
-    //     }
-    //     return null;
-    // }
-
-    // getSignatureKey(id){
-    //     const genesis = this.getGenesis();
-    //     const students = genesis.data.students;
-    //     for(let i = 0; i < students.length; i++){
-    //         if(students[i].ID == id){
-    //             return students[i].key
-    //         }
-    //     }
-    //     return null;
-    // }
-    appendBlock(block) { //dodanie bez kopania
-        //todo poprawność
-
-    }
     addBlock(data) {
         const block = Block.mineBlock(this.chain[this.chain.length - 1], data);
         this.chain.push(block);

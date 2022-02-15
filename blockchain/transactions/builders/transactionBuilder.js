@@ -35,7 +35,6 @@ class TransactionBuilder{
     }
 
     buildFromJSON(json){
-        console.log(json)
         this.setID(json.id);
         this.setDate(json.date);
         this.setSignature(json.signature);

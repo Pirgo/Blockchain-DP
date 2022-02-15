@@ -88,7 +88,6 @@ class P2pserver {
                     break;
                 case MESSAGE_TYPE.transaction:
                     if (this.conflictSolver.ready) {
-                        //todo - weryfikacja
                         console.log("adding transaction")
                         const builder = new TransactionBuilder();
                         builder.buildFromJSON(data.transaction);
@@ -164,6 +163,7 @@ class P2pserver {
                             }   //todo - to chyba powinno być gdzieś indziej
                             else {
                                 console.log("new block not compatible")
+                                this.collide();
                             }
 
 
