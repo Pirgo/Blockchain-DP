@@ -61,6 +61,10 @@ app.get("/mine-transactions", (req, res) => {
     res.redirect("/blocks");
 });
 
+app.get("/clear-transaction", (req, res)=>{
+    transactionPool.clear();
+})
+
 
 //returns all lecturers id in genesis
 app.get("/lecturers", (req, res) => {
