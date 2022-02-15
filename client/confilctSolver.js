@@ -33,9 +33,7 @@ class ConflictSolver {
             acc += e.hash;
             return acc;
         }, '')
-        console.log("Identifier " + identifier);
         let index = this.identifiers.indexOf(identifier)
-        console.log("Index of identifier " + index)
         if (index == -1) {      //jeśli takiego blockchainu jeszcze nie dostałem...
             this.identifiers.push(identifier);
             this.candidates.push(chain)     //dodaję do kandydatów
@@ -45,14 +43,10 @@ class ConflictSolver {
         }
         let topCount = Math.max.apply(undefined ,this.counts);   //liczę ile peerów ma najpopularniejszy blockchain
 
-        console.log("TOPCOUNT " + topCount)
-        console.log("COUNTS ")
-        console.log(this.counts)
         if (topCount >= Math.ceil(this.peers.length / 2)) {    //jeśli dany blockchain ma więcej niż połowa peerów...
             this.blockchain.replaceChain(this.candidates[this.counts.indexOf(topCount)])    //...nadpisuję swój blockchain tym, ktrego ma najwięcej peerów
             for (let i = 0; i < transactionPool.transactions.length; i++) {
                 const element = transactionPool.transactions[i];
-                console.log("ELEMENT: " + element.type)
                 let builder;
                 switch(element.type){
                     case TypeEnum.certificate: {
