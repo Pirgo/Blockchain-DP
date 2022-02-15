@@ -2,6 +2,10 @@
 import("../blockchain/blockchain.js")
 const dgram = require('dgram');
 const TransactionBuilder = require('../blockchain/transactions/builders/transactionBuilder');
+const PresenceTransactionBuilder = require("../blockchain/transactions/builders/presenceTransactionBuilder");
+const CertificateTransactionBuilder = require("../blockchain/transactions/builders/certificateTransactionBuilder");
+const PartialGradeTransactionBuilder = require("../blockchain/transactions/builders/partialGradeTransactionBuilder");
+const FinalGradeTransactionBuilder = require("../blockchain/transactions/builders/finalGradeTransactionBuilder");
 const ConflictSolver = require("./confilctSolver")
 const Sender = require("./sender")
 const Blockchain = require('../blockchain/blockchain');
