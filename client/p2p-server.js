@@ -92,7 +92,7 @@ class P2pserver {
                             console.log("response with invalid chain - ignored")
                     break;
                 case MESSAGE_TYPE.transaction:
-                    if (this.conflictSolver.ready) {
+                    
                         console.log("adding transaction")
                         let builder
                         switch(data.transaction.type){
@@ -122,9 +122,6 @@ class P2pserver {
                         if(! this.transactionPool.add(transaction)){
                             console.log("Wrong transaction")
                         };
-                    } else {
-                        this.collide()
-                    }
                     break;
                 case MESSAGE_TYPE.clear_transactions:
                     console.warn("clear transactions is deprecated")
